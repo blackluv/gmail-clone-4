@@ -1,6 +1,4 @@
-h1 {
-	color: yellow;
-}
+
 .top-row {
 	margin-top: 10px;
 	padding-top: 15px;
@@ -8,8 +6,8 @@ h1 {
 	// background-color: #ccc;
 	// horiztonal-align: middle;
 	// height: 100px;
-	// display: inline-block;
-		align-items: center;
+	display: flex;
+	align-items: center;
 
 }
 
