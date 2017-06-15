@@ -13,7 +13,7 @@ class emailController {
         // emailRequest.then(() => {
         //     ctrl.processEmails();
         // });
-        // $interval(() => {ctrl.getEmails();}, 2000,[2]);
+        $interval(() => {ctrl.getEmails();}, 2000,[2]);
 
     }
 
@@ -25,6 +25,8 @@ class emailController {
             success: function(data) {
                 ctrl.emailData = data;
             }
+        }).then((data) => {
+            processEmails(data);
         });
 
         console.log("fakeEmails:", fakeEmails);
