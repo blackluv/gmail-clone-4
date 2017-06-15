@@ -1,0 +1,42 @@
+
+.top-row {
+	margin-top: 10px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	// background-color: #ccc;
+	// horiztonal-align: middle;
+	// height: 100px;
+	display: flex;
+	align-items: center;
+
+}
+
+	
+.profile {
+	// position: absolute;
+	float: right;
+	margin-left: 20px;
+	height: 40px;
+	weight: 40px;
+	border-radius: 50%;
+}
+#right-search {
+	float: right;
+	margin-right: 20px;
+}
+
+.logo {
+	float: left;
+	display: inline-block;
+	margin-left: 30px;
+	margin-right: 30px;	
+	height: 90px;
+	width: 110px;
+}
+// .vertical-center {
+//   min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+//   min-height: 100vh; /* These two lines are counted as one :-)       */
+
+//   display: flex;
+//   align-items: center;
+// }
