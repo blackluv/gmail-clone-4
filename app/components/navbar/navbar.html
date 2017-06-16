@@ -2,20 +2,20 @@
     <div class="col-sm-3 col-md-2"><img class='logo center-block' src='/app/assets/images/bmail.jpg'></div>
     <div class="col-lg-6">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search Bmail..">
+            <input type="text" class="form-control" placeholder="Search Bmail.." ng-model="$ctrl.searchText" ng-change='$ctrl.search($ctrl.searchText)'>
             <span class="input-group-btn">
-        <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> </button>
+        <button class="btn btn-primary" type="button" ng-click='$ctrl.search($ctrl.searchText)'><span class="glyphicon glyphicon-search" aria-hidden="true"></span> </button>
             </span>
         </div>
         <!-- /input-group -->
     </div>
     <!-- /.col-lg-6 -->
     <span id='right-search'>
-	<!-- Split button -->
-	<div class="btn-group">
-  		<button type="button" class="btn btn-danger">Action</button>
-  		<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    	<span class="caret"></span>
+  <!-- Split button -->
+  <div class="btn-group">
+      <button type="button" class="btn btn-danger">Action</button>
+      <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
     <span class="sr-only">Toggle Dropdown</span>
     </button>
     <ul class="dropdown-menu">

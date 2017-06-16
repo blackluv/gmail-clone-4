@@ -115,15 +115,15 @@ var emailController = function () {
         ctrl.$rootScope = $rootScope;
         ctrl.emails = [];
         ctrl.emailData;
+        $interval(function () {
+            ctrl.getEmails();
+        }, 5000, [30]);
 
-        // let emailRequest = new Promise((resolve, reject) => {
-        //     ctrl.getEmails();
-        // });
-
-        // emailRequest.then(() => {
-        //     ctrl.processEmails();
-        // });
-        // $interval(() => {ctrl.getEmails();}, 2000,[2]);
+        ctrl.$rootScope.$watch('searchText', function () {
+            // watches for when the text box gets updated
+            ctrl.searchText = ctrl.$rootScope.searchText;
+            console.log('searchText: ', ctrl.searchText);
+        });
     }
 
     _createClass(emailController, [{
@@ -131,29 +131,50 @@ var emailController = function () {
         value: function getEmails() {
             var ctrl = this;
             $.ajax({
-                url: 'https://randomuser.me/api/?results=10&nat=us',
+                url: 'https://randomuser.me/api/?results=2&nat=us',
                 dataType: 'json',
                 success: function success(data) {
-                    ctrl.emailData = data;
+                    ctrl.processEmails(data);
                 }
             });
-
-            console.log("fakeEmails:", fakeEmails);
-            // console.log(ctrl);
         }
     }, {
         key: 'processEmails',
         value: function processEmails(emailData) {
             var ctrl = this;
+            var now = new Date();
             emailData.results.forEach(function (each) {
                 ctrl.emails.push({
                     name: each.name.first + ' ' + each.name.last,
-                    email: each.email
+                    email: each.email,
+                    read: false,
+                    starred: false,
+                    time: [[now.getMonth() + 1, now.getDate()].join("/"), [AddZero(now.getHours()), AddZero(now.getMinutes())].join(":"), now.getHours() >= 12 ? "PM" : "AM"].join(" ")
                 });
             });
 
-            console.log(ctrl.emails.length);
-            crtl.$rootScope.$applyAsync();
+            function AddZero(num) {
+                return num >= 0 && num < 10 ? "0" + num : num + "";
+            }
+
+            console.log('hello');
+            // ctrl.$rootScope.unread = ctrl.emails.length;
+            ctrl.read();
+            // ctrl.$rootScope.time = ctrl.emails
+            // crtl.$rootScope.$applyAsync();
+        }
+    }, {
+        key: 'read',
+        value: function read() {
+            var ctrl = this;
+            ctrl.unread = 0;
+            ctrl.emails.forEach(function (e) {
+                console.log("read = ", e.read);
+                if (!e.read) {
+                    ctrl.unread++;
+                }
+            });
+            ctrl.$rootScope.unread = ctrl.unread;
         }
     }]);
 
@@ -163,7 +184,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#home\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-inbox\">\n                </span>Primary</a></li>\n        <li><a href=\"#profile\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-user\"></span>\n                    Social</a></li>\n        <li><a href=\"#messages\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-tags\"></span>\n                    Promotions</a></li>\n        <li><a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\">\n                </span></a></li>\n    </ul>\n    <!-- Tab panes -->\n\n    <button ng-click=\"$ctrl.getEmails()\">PUSH ME</button>\n    <h1>{{$ctrl.emails.length}}</h1>\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"home\">\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails\">\n                   \n                        <label>\n                            <input type=\"checkbox\">\n                        </label>\n                    \n                    <span class=\"glyphicon glyphicon-star-empty\"></span><span class=\"name\" style=\"min-width: 120px;\n                                display: inline-block;\">{{email.name}}</span> <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- More content here</span> <span class=\"badge\">12:10 AM</span> <span class=\"pull-right\"><span class=\"glyphicon glyphicon-paperclip\">\n                                </span></span>\n                </a>\n\n            </div>\n        </div>\n        <div class=\"tab-pane fade in\" id=\"profile\">\n            <div class=\"list-group\">\n                <div class=\"list-group-item\">\n                    <span class=\"text-center\">This tab is empty.</span>\n                </div>\n            </div>\n        </div>\n        <div class=\"tab-pane fade in\" id=\"messages\">\n            ...</div>\n        <div class=\"tab-pane fade in\" id=\"settings\">\n            This tab is empty.</div>\n    </div>\n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://doubldragon.github.io\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
+module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#home\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-inbox\">\n                </span>Primary</a></li>\n        <li><a href=\"#profile\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-user\"></span>\n                    Social</a></li>\n        <li><a href=\"#messages\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-tags\"></span>\n                    Promotions</a></li>\n        <li><a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\">\n                </span></a></li>\n    </ul>\n    <!-- Tab panes -->\n\n\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"home\">\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.searchText\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\" >\n                   \n                        <label>\n                            <input type=\"checkbox\">\n                        </label>\n                    \n                    <span class=\"glyphicon glyphicon-star-empty\"></span><span class=\"name\" style=\"min-width: 120px;\n                                display: inline-block;\">{{email.name}}</span> <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- More content here</span> <span class=\"badge\">{{email.time}}</span> <span class=\"pull-right\"><span class=\"glyphicon glyphicon-paperclip\">\n                                </span></span>\n                </a>\n\n            </div>\n        </div>\n        <div class=\"tab-pane fade in\" id=\"profile\">\n            <div class=\"list-group\">\n                <div class=\"list-group-item\">\n                    <span class=\"text-center\">This tab is empty.</span>\n                </div>\n            </div>\n        </div>\n        <div class=\"tab-pane fade-in\" id=\"messages\">\n            ...</div>\n        <div class=\"tab-pane fade-in\" id=\"settings\">\n            This tab is empty.</div>\n    </div>\n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://doubldragon.github.io\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -193,26 +214,43 @@ var navbarComponent = {
 exports.default = navbarComponent;
 
 },{"./navbar.controller":9,"./navbar.html":10}],9:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var navbarController = function navbarController($rootScope, $interval) {
-	_classCallCheck(this, navbarController);
+var navbarController = function () {
+	function navbarController($rootScope, $interval) {
+		_classCallCheck(this, navbarController);
 
-	var ctrl = this;
-	ctrl.title = "Bmail";
-	ctrl.$rootScope = $rootScope;
-};
+		var ctrl = this;
+		ctrl.title = "Bmail";
+		ctrl.$rootScope = $rootScope;
+		ctrl.searchText = '';
+	}
+
+	_createClass(navbarController, [{
+		key: 'search',
+		value: function search(searchText) {
+			var ctrl = this;
+			console.log('Updating searchText: ', searchText);
+
+			ctrl.$rootScope.searchText = searchText;
+		}
+	}]);
+
+	return navbarController;
+}();
 
 exports.default = navbarController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<div class=\"row top-row \">\n    <div class=\"col-sm-3 col-md-2\"><img class='logo center-block' src='/app/assets/images/bmail.jpg'></div>\n    <div class=\"col-lg-6\">\n        <div class=\"input-group\">\n            <input type=\"text\" class=\"form-control\" placeholder=\"Search Bmail..\">\n            <span class=\"input-group-btn\">\n        <button class=\"btn btn-primary\" type=\"button\"><span class=\"glyphicon glyphicon-search\" aria-hidden=\"true\"></span> </button>\n            </span>\n        </div>\n        <!-- /input-group -->\n    </div>\n    <!-- /.col-lg-6 -->\n    <span id='right-search'>\n\t<!-- Split button -->\n\t<div class=\"btn-group\">\n  \t\t<button type=\"button\" class=\"btn btn-danger\">Action</button>\n  \t\t<button type=\"button\" class=\"btn btn-danger dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n    \t<span class=\"caret\"></span>\n    <span class=\"sr-only\">Toggle Dropdown</span>\n    </button>\n    <ul class=\"dropdown-menu\">\n        <li><a href=\"#\">Help</a></li>\n        <li><a href=\"#\">Another action</a></li>\n        <li><a href=\"#\">Something else here</a></li>\n        <li role=\"separator\" class=\"divider\"></li>\n        <li><a href=\"#\">Logout</a></li>\n    </ul>\n</div>\n<img class='profile' src='/app/assets/images/profile.png'></span>\n\n</div>\n<hr>\n\n<!-- <ul class=\"nav nav-tabs nav-justified\">\n  <li><a href=\"#\">Inbox</a></li>\n  <li><a href=\"#\">Social</a></li>\n  <li><a href=\"#\">Promotions</a></li>\n  <li><a href=\"#\">Updates</a></li>\n</ul> -->\n\n<!-- /.row -->\n<!-- <link rel=\"stylesheet\" href=\"navbar.scss\"> -->\n";
+module.exports = "<div class=\"row top-row \">\n    <div class=\"col-sm-3 col-md-2\"><img class='logo center-block' src='/app/assets/images/bmail.jpg'></div>\n    <div class=\"col-lg-6\">\n        <div class=\"input-group\">\n            <input type=\"text\" class=\"form-control\" placeholder=\"Search Bmail..\" ng-model=\"$ctrl.searchText\" ng-change='$ctrl.search($ctrl.searchText)'>\n            <span class=\"input-group-btn\">\n        <button class=\"btn btn-primary\" type=\"button\" ng-click='$ctrl.search($ctrl.searchText)'><span class=\"glyphicon glyphicon-search\" aria-hidden=\"true\"></span> </button>\n            </span>\n        </div>\n        <!-- /input-group -->\n    </div>\n    <!-- /.col-lg-6 -->\n    <span id='right-search'>\n  <!-- Split button -->\n  <div class=\"btn-group\">\n      <button type=\"button\" class=\"btn btn-danger\">Action</button>\n      <button type=\"button\" class=\"btn btn-danger dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n      <span class=\"caret\"></span>\n    <span class=\"sr-only\">Toggle Dropdown</span>\n    </button>\n    <ul class=\"dropdown-menu\">\n        <li><a href=\"#\">Help</a></li>\n        <li><a href=\"#\">Another action</a></li>\n        <li><a href=\"#\">Something else here</a></li>\n        <li role=\"separator\" class=\"divider\"></li>\n        <li><a href=\"#\">Logout</a></li>\n    </ul>\n</div>\n<img class='profile' src='/app/assets/images/profile.png'></span>\n\n</div>\n<hr>\n\n<!-- <ul class=\"nav nav-tabs nav-justified\">\n  <li><a href=\"#\">Inbox</a></li>\n  <li><a href=\"#\">Social</a></li>\n  <li><a href=\"#\">Promotions</a></li>\n  <li><a href=\"#\">Updates</a></li>\n</ul> -->\n\n<!-- /.row -->\n<!-- <link rel=\"stylesheet\" href=\"navbar.scss\"> -->\n";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -242,7 +280,7 @@ var sidebarComponent = {
 exports.default = sidebarComponent;
 
 },{"./sidebar.controller":12,"./sidebar.html":13}],12:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -256,11 +294,16 @@ var sidebarController = function sidebarController($rootScope, $interval) {
 	var ctrl = this;
 	ctrl.title = "Bmail";
 	ctrl.$rootScope = $rootScope;
+
+	ctrl.$rootScope.$watch('unread', function () {
+		console.log('Updating Unreads');
+		ctrl.unread = ctrl.$rootScope.unread;
+	});
 };
 
 exports.default = sidebarController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n            <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n            <hr>\n            <ul class=\"nav nav-pills nav-stacked\">\n                <li class=\"active\"><a href=\"#\"><span class=\"badge pull-right\">32</span> Inbox </a>\n                </li>\n                <li><a href=\"#\">Starred</a></li>\n                <li><a href=\"#\">Important</a></li>\n                <li><a href=\"#\">Sent Mail</a></li>\n                <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n            </ul>\n        </div>\n\n<!-- <nav class=\"navbar navbar-default sidebar col-md-2\" role=\"navigation\">\n    <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-sidebar-navbar-collapse-1\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>      \n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"bs-sidebar-navbar-collapse-1\">\n      <ul class=\"nav nav-pills nav-stacked\">\n        <li><a href=\"#\">Inbox <span class=\"badge\">42</span></a></li>\n        <li class=\"active\"><a href=\"#\">Inbox <span class=\"badge\">42</span><span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-home\"></span></a></li>\n        <li class=\"dropdown\">\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Sent Mail <span class=\"caret\"></span><span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-user\"></span></a>\n          <ul class=\"dropdown-menu forAnimate\" role=\"menu\">\n            <li><a href=\"{{URL::to('createusuario')}}\">Crear</a></li>\n            <li><a href=\"#\">Modificar</a></li>\n            <li><a href=\"#\">Reportar</a></li>\n            <li class=\"divider\"></li>\n            <li><a href=\"#\">Separated link</a></li>\n            <li class=\"divider\"></li>\n            <li><a href=\"#\">Informes</a></li>\n          </ul>\n        </li>          \n        <li ><a href=\"#\">Drafts<span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-th-list\"></span></a></li>        \n        <li ><a href=\"#\">Tags<span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-tags\"></span></a></li>\n      </ul>\n    </div>\n  </div>\n</nav> -->";
+module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n            <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n            <hr>\n            <ul class=\"nav nav-pills nav-stacked\">\n                <li class=\"active\"><a href=\"#\"><span class=\"badge pull-right\">{{$ctrl.unread}}</span> Inbox </a>\n                </li>\n                <li><a href=\"#\">Starred</a></li>\n                <li><a href=\"#\">Important</a></li>\n                <li><a href=\"#\">Sent Mail</a></li>\n                <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n            </ul>\n        </div>\n\n<!-- <nav class=\"navbar navbar-default sidebar col-md-2\" role=\"navigation\">\n    <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-sidebar-navbar-collapse-1\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>      \n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"bs-sidebar-navbar-collapse-1\">\n      <ul class=\"nav nav-pills nav-stacked\">\n        <li><a href=\"#\">Inbox <span class=\"badge\">42</span></a></li>\n        <li class=\"active\"><a href=\"#\">Inbox <span class=\"badge\">42</span><span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-home\"></span></a></li>\n        <li class=\"dropdown\">\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Sent Mail <span class=\"caret\"></span><span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-user\"></span></a>\n          <ul class=\"dropdown-menu forAnimate\" role=\"menu\">\n            <li><a href=\"{{URL::to('createusuario')}}\">Crear</a></li>\n            <li><a href=\"#\">Modificar</a></li>\n            <li><a href=\"#\">Reportar</a></li>\n            <li class=\"divider\"></li>\n            <li><a href=\"#\">Separated link</a></li>\n            <li class=\"divider\"></li>\n            <li><a href=\"#\">Informes</a></li>\n          </ul>\n        </li>          \n        <li ><a href=\"#\">Drafts<span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-th-list\"></span></a></li>        \n        <li ><a href=\"#\">Tags<span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon glyphicon-tags\"></span></a></li>\n      </ul>\n    </div>\n  </div>\n</nav> -->";
 
 },{}]},{},[4]);
