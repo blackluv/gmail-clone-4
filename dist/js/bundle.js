@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$interval'];
+_app4.default.$inject = ['$rootScope', '$interval', '$http'];
 
 var appComponent = {
 	template: _app2.default,
@@ -88,7 +88,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var emailComponent = {
 	bindings: {},
 	template: _email2.default,
-	controller: ['$rootScope', '$interval', _email4.default],
+	controller: ['$rootScope', '$interval', '$http', _email4.default],
 	controllerAs: '$ctrl'
 
 };
@@ -107,22 +107,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var emailController = function () {
-    function emailController($rootScope, $interval) {
+    function emailController($rootScope, $interval, $http) {
         _classCallCheck(this, emailController);
 
         var ctrl = this;
         ctrl.title = "BMail";
         ctrl.$rootScope = $rootScope;
+        ctrl.$http = $http;
         ctrl.emails = [];
         ctrl.emailData;
+        ctrl.getEmails();
         $interval(function () {
             ctrl.getEmails();
-        }, 5000, [30]);
+        }, 30000, [50]);
 
         ctrl.$rootScope.$watch('searchText', function () {
             // watches for when the text box gets updated
             ctrl.searchText = ctrl.$rootScope.searchText;
-            console.log('searchText: ', ctrl.searchText);
         });
     }
 
@@ -130,12 +131,12 @@ var emailController = function () {
         key: 'getEmails',
         value: function getEmails() {
             var ctrl = this;
-            $.ajax({
+            ctrl.$http({
+                method: 'GET',
                 url: 'https://randomuser.me/api/?results=2&nat=us',
-                dataType: 'json',
-                success: function success(data) {
-                    ctrl.processEmails(data);
-                }
+                dataType: 'json'
+            }).then(function success(data) {
+                ctrl.processEmails(data);
             });
         }
     }, {
@@ -143,7 +144,7 @@ var emailController = function () {
         value: function processEmails(emailData) {
             var ctrl = this;
             var now = new Date();
-            emailData.results.forEach(function (each) {
+            emailData.data.results.forEach(function (each) {
                 ctrl.emails.push({
                     name: each.name.first + ' ' + each.name.last,
                     email: each.email,
@@ -158,10 +159,7 @@ var emailController = function () {
             }
 
             console.log('hello');
-            // ctrl.$rootScope.unread = ctrl.emails.length;
             ctrl.read();
-            // ctrl.$rootScope.time = ctrl.emails
-            // crtl.$rootScope.$applyAsync();
         }
     }, {
         key: 'read',
@@ -176,6 +174,14 @@ var emailController = function () {
             });
             ctrl.$rootScope.unread = ctrl.unread;
         }
+    }, {
+        key: 'starredEmail',
+        value: function starredEmail(email) {
+            var ctrl = this;
+            console.log("email: ", email);
+            email.starred = !email.starred;
+            ctrl.$rootScope.emails = ctrl.emails;
+        }
     }]);
 
     return emailController;
@@ -184,7 +190,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#home\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-inbox\">\n                </span>Primary</a></li>\n        <li><a href=\"#profile\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-user\"></span>\n                    Social</a></li>\n        <li><a href=\"#messages\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-tags\"></span>\n                    Promotions</a></li>\n        <li><a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\">\n                </span></a></li>\n    </ul>\n    <!-- Tab panes -->\n\n\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"home\">\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.searchText\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\" >\n                   \n                        <label>\n                            <input type=\"checkbox\">\n                        </label>\n                    \n                    <span class=\"glyphicon glyphicon-star-empty\"></span><span class=\"name\" style=\"min-width: 120px;\n                                display: inline-block;\">{{email.name}}</span> <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- More content here</span> <span class=\"badge\">{{email.time}}</span> <span class=\"pull-right\"><span class=\"glyphicon glyphicon-paperclip\">\n                                </span></span>\n                </a>\n\n            </div>\n        </div>\n        <div class=\"tab-pane fade in\" id=\"profile\">\n            <div class=\"list-group\">\n                <div class=\"list-group-item\">\n                    <span class=\"text-center\">This tab is empty.</span>\n                </div>\n            </div>\n        </div>\n        <div class=\"tab-pane fade-in\" id=\"messages\">\n            ...</div>\n        <div class=\"tab-pane fade-in\" id=\"settings\">\n            This tab is empty.</div>\n    </div>\n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://doubldragon.github.io\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
+module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li class=\"active\"><a href=\"#home\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-inbox\">\n                </span>Primary</a></li>\n        <li><a href=\"#profile\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-user\"></span>\n                    Social</a></li>\n        <li><a href=\"#messages\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-tags\"></span>\n                    Promotions</a></li>\n        <li><a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\">\n                </span></a></li>\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"home\">\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.searchText\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"email.starred= !email.starred\" ng-class=\"{starred : email.starred}\"></span><span class=\"name\" style=\"min-width: 120px;\n                                display: inline-block;\">{{email.name}}</span> <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- More content here</span> <span class=\"badge\">{{email.time}}</span> <span class=\"pull-right\"><span class=\"glyphicon glyphicon-paperclip\">\n                                </span></span>\n                </a>\n            </div>\n        </div>\n        <div class=\"tab-pane fade in\" id=\"profile\">\n            <div class=\"list-group\">\n                <div class=\"list-group-item\">\n                    <span class=\"text-center\">This tab is empty.</span>\n                </div>\n            </div>\n        </div>\n        <div class=\"tab-pane fade-in\" id=\"messages\">\n            ...</div>\n        <div class=\"tab-pane fade-in\" id=\"settings\">\n            This tab is empty.</div>\n    </div>\n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://doubldragon.github.io\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -206,7 +212,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var navbarComponent = {
 	bindings: {},
 	template: _navbar2.default,
-	controller: ['$rootScope', '$interval', _navbar4.default],
+	controller: ['$rootScope', '$interval', '$http', _navbar4.default],
 	controllerAs: '$ctrl'
 
 };
@@ -298,6 +304,11 @@ var sidebarController = function sidebarController($rootScope, $interval) {
 	ctrl.$rootScope.$watch('unread', function () {
 		console.log('Updating Unreads');
 		ctrl.unread = ctrl.$rootScope.unread;
+	});
+
+	ctrl.$rootscope.$watch('starred', function () {
+		console.log('updating starred emails');
+		ctrl.emails = ctrl.$rootScope.emails;
 	});
 };
 

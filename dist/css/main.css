@@ -36,6 +36,11 @@ hr {
 .nav-pills > li > a {
   padding: 5px 10px; }
 
+.glyphicon-star {
+  color: #ccc;
+  margin-left: 10px;
+  margin-right: 45px; }
+
 .ad a.title {
   color: #15C;
   text-decoration: none;
@@ -45,6 +50,12 @@ hr {
 .ad a.url {
   color: #093;
   text-decoration: none; }
+
+.name {
+  margin-left: 10px; }
+
+.starred {
+  color: #FFBC00; }
 
 .top-row {
   margin-top: 10px;

@@ -1,16 +1,17 @@
 class emailController {
-    constructor($rootScope, $interval) {
+    constructor($rootScope, $interval, $http) {
         let ctrl = this;
         ctrl.title = "BMail";
         ctrl.$rootScope = $rootScope;
+        ctrl.$http = $http
         ctrl.emails = [];
         ctrl.emailData;
-        $interval(() => { ctrl.getEmails(); }, 5000, [30]);
+        ctrl.getEmails();
+        $interval(() => { ctrl.getEmails(); }, 30000, [50]);
 
         ctrl.$rootScope.$watch('searchText', () => {
             // watches for when the text box gets updated
             ctrl.searchText = ctrl.$rootScope.searchText;
-            console.log('searchText: ', ctrl.searchText);
         });
 
 
@@ -19,13 +20,13 @@ class emailController {
 
     getEmails() {
         let ctrl = this;
-        $.ajax({
+        ctrl.$http ({
+            method: 'GET',
             url: 'https://randomuser.me/api/?results=2&nat=us',
-            dataType: 'json',
-            success: function(data) {
+            dataType: 'json'
+        }).then(function success(data) {
                 ctrl.processEmails(data);
-            }
-        })
+            })
 
 
     }
@@ -33,7 +34,7 @@ class emailController {
     processEmails(emailData) {
         let ctrl = this;
         let now = new Date();
-        emailData.results.forEach(each => {
+        emailData.data.results.forEach(each => {
                 ctrl.emails.push({
                     name: each.name.first + ' ' + each.name.last,
                     email: each.email,
@@ -57,10 +58,7 @@ class emailController {
             }
 
         console.log('hello');
-        // ctrl.$rootScope.unread = ctrl.emails.length;
         ctrl.read();
-        // ctrl.$rootScope.time = ctrl.emails
-            // crtl.$rootScope.$applyAsync();
     }
 
     read() {
@@ -73,6 +71,14 @@ class emailController {
             }
         });
         ctrl.$rootScope.unread = ctrl.unread;
+    }
+
+    starredEmail(email) {
+        let ctrl = this;
+        console.log("email: ", email);
+        email.starred = !email.starred;
+        ctrl.$rootScope.emails = ctrl.emails;
+
     }
 
 }

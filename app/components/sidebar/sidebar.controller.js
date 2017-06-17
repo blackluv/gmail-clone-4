@@ -9,7 +9,10 @@ class sidebarController {
 			ctrl.unread = ctrl.$rootScope.unread;
 		});
 		
-
+		ctrl.$rootscope.$watch('starred', () => {
+			console.log('updating starred emails');
+			ctrl.emails = ctrl.$rootScope.emails;
+		})
 		
 	};
 
