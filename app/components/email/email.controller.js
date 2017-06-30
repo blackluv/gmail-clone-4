@@ -7,7 +7,7 @@ class emailController {
         ctrl.emails = [];
         ctrl.emailData;
         ctrl.getEmails();
-        $interval(() => { ctrl.getEmails(); }, 30000, [50]);
+        $interval(() => { ctrl.getEmails(); }, 5000, [50]);
 
         ctrl.$rootScope.$watch('searchText', () => {
             // watches for when the text box gets updated
@@ -20,6 +20,7 @@ class emailController {
 
     getEmails() {
         let ctrl = this;
+        
         ctrl.$http ({
             method: 'GET',
             url: 'https://randomuser.me/api/?results=2&nat=us',

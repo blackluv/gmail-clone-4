@@ -119,7 +119,7 @@ var emailController = function () {
         ctrl.getEmails();
         $interval(function () {
             ctrl.getEmails();
-        }, 30000, [50]);
+        }, 5000, [50]);
 
         ctrl.$rootScope.$watch('searchText', function () {
             // watches for when the text box gets updated
@@ -306,10 +306,10 @@ var sidebarController = function sidebarController($rootScope, $interval) {
 		ctrl.unread = ctrl.$rootScope.unread;
 	});
 
-	ctrl.$rootscope.$watch('starred', function () {
-		console.log('updating starred emails');
-		ctrl.emails = ctrl.$rootScope.emails;
-	});
+	// ctrl.$rootscope.$watch('starred', () => {
+	// 	console.log('updating starred emails');
+	// 	ctrl.emails = ctrl.$rootScope.emails;
+	// })
 };
 
 exports.default = sidebarController;
