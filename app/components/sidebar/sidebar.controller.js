@@ -6,15 +6,9 @@ class sidebarController {
 		ctrl.activeNav= "Inbox";
 		ctrl.viewStarred = false;
 		ctrl.$rootScope.$watch('unread', () => {
-			console.log('Updating Unreads');
 			ctrl.unread = ctrl.$rootScope.unread;
 		});
-		
-		// ctrl.$rootscope.$watch('starred', () => {
-		// 	console.log('updating starred emails');
-		// 	ctrl.emails = ctrl.$rootScope.emails;
-		// })
-
+		ctrl.toggleNav("Inbox");
 	};
 
 	toggleNav(selection) {

@@ -118,10 +118,13 @@ var emailController = function () {
         ctrl.emailData;
         ctrl.getEmails();
         ctrl.activeNav = "inbox";
+        ctrl.viewStarred = false;
         $interval(function () {
             ctrl.getEmails();
         }, 5000, [50]);
-
+        $interval(function () {
+            ctrl.getEmails();
+        }, 2000, [2]);
         // watches for when the text box gets updated
         ctrl.$rootScope.$watch('searchText', function () {
             ctrl.searchText = ctrl.$rootScope.searchText;
@@ -131,9 +134,6 @@ var emailController = function () {
             ctrl.viewStarred = ctrl.$rootScope.viewStarred;
         });
 
-        $interval(function () {
-            ctrl.getEmails();
-        }, 2000, [2]);
         ctrl.tabs = [{
             name: 'Primary',
             icon: 'glyphicon-inbox'
@@ -194,7 +194,6 @@ var emailController = function () {
             var ctrl = this;
             ctrl.unread = 0;
             ctrl.emails.forEach(function (e) {
-                console.log("read = ", e.read);
                 if (!e.read) {
                     ctrl.unread++;
                 }
@@ -217,14 +216,19 @@ var emailController = function () {
         }
     }, {
         key: "showStarred",
-        value: function showStarred(starred) {
+        value: function showStarred(star) {
             var ctrl = this;
-            console.log("Starred: ", starred);
-            console.log("viewStarred: ", ctrl.viewStarred);
-            if (ctrl.viewStarred == true && starred == true || ctrl.viewStarred == false) {
+            console.log("Starred: ", star);
+            if (ctrl.viewStarred && star || ctrl.viewStarred == false) {
                 return false;
             }
             return true;
+        }
+    }, {
+        key: "changeStar",
+        value: function changeStar(email) {
+            email.starred = !email.starred;
+            console.log('!!!!!!!changing the star for: ', email.name);
         }
     }]);
 
@@ -234,7 +238,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n\n            <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.showStarred(email.starred) | filter: $ctrl.searchText | filter: {category: $ctrl.activeTab}\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"email.starred= !email.starred\" \n                        ng-class=\"{starred :   email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                    <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n            </div>\n        </div>\n        \n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
+module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n\n            <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | \n                    filter: {starred: $ctrl.showStarred(starred)} | \n                    filter: $ctrl.searchText | \n                    filter: {category: $ctrl.activeTab}\" \n                    ng-click=\"$ctrl.read(email.read=true)\" \n                    ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"$ctrl.changeStar(email)\" \n                        ng-class=\"{starred :   email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                    <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n            </div>\n        </div>\n        \n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a> | <a href=\"https://github.com/doubldragon/gmail-clone\">Fork it on Github!</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -350,14 +354,9 @@ var sidebarController = function () {
 		ctrl.activeNav = "Inbox";
 		ctrl.viewStarred = false;
 		ctrl.$rootScope.$watch('unread', function () {
-			console.log('Updating Unreads');
 			ctrl.unread = ctrl.$rootScope.unread;
 		});
-
-		// ctrl.$rootscope.$watch('starred', () => {
-		// 	console.log('updating starred emails');
-		// 	ctrl.emails = ctrl.$rootScope.emails;
-		// })
+		ctrl.toggleNav("Inbox");
 	}
 
 	_createClass(sidebarController, [{

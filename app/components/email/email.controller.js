@@ -8,8 +8,9 @@ class emailController {
         ctrl.emailData;
         ctrl.getEmails();
         ctrl.activeNav= "inbox";
+        ctrl.viewStarred = false;
         $interval(() => { ctrl.getEmails(); }, 5000, [50]);
-        
+        $interval(() => { ctrl.getEmails(); }, 2000, [2]);
         // watches for when the text box gets updated
         ctrl.$rootScope.$watch('searchText', () => {
             ctrl.searchText = ctrl.$rootScope.searchText;
@@ -19,7 +20,7 @@ class emailController {
             ctrl.viewStarred = ctrl.$rootScope.viewStarred;
         });
 
-        $interval(() => {ctrl.getEmails();}, 2000,[2]);
+        
         ctrl.tabs = [{
             name: 'Primary',
             icon: 'glyphicon-inbox'
@@ -83,7 +84,6 @@ class emailController {
         let ctrl= this;
         ctrl.unread = 0;
         ctrl.emails.forEach(e => {
-            console.log("read = ", e.read);
             if (!e.read){
                 ctrl.unread++;
             }
@@ -102,14 +102,19 @@ class emailController {
         const ctrl = this;
         ctrl.activeTab = tabName;
     };
-    showStarred(starred) {
+    
+    showStarred(star) {
         let ctrl = this;
-        console.log ("Starred: ", starred);
-        console.log ("viewStarred: ", ctrl.viewStarred);
-        if ((ctrl.viewStarred == true && starred == true) || ctrl.viewStarred == false) {
+        console.log ("Starred: ", star);
+        if ((ctrl.viewStarred && star) || ctrl.viewStarred == false) {
             return false;
         }
         return true;
+    }
+
+    changeStar(email) {
+        email.starred = !email.starred;
+        console.log('!!!!!!!changing the star for: ', email.name);
     }
 }
 

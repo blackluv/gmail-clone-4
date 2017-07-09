@@ -12,11 +12,16 @@
     <div class="tab-content">
         <div class="tab-pane fade in active" id="primary" ><!-- ng-show="$ctrl.activeTab==='primary'"> -->
             <div class="list-group">
-                <a href="#" class="list-group-item" ng-repeat="email in $ctrl.emails | filter: $ctrl.showStarred(email.starred) | filter: $ctrl.searchText | filter: {category: $ctrl.activeTab}" ng-click="$ctrl.read(email.read=true)" ng-class="{read : email.read}">
+                <a href="#" class="list-group-item" ng-repeat="email in $ctrl.emails | 
+                    filter: {starred: $ctrl.showStarred(starred)} | 
+                    filter: $ctrl.searchText | 
+                    filter: {category: $ctrl.activeTab}" 
+                    ng-click="$ctrl.read(email.read=true)" 
+                    ng-class="{read : email.read}">
                     <label>
                         <input type="checkbox">
                     </label>
-                    <span class="glyphicon glyphicon-star" ng-click="email.starred= !email.starred" 
+                    <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
                         ng-class="{starred :   email.starred}"></span>
                     <span class="name" style="min-width: 120px; display: inline-block;">{{email.name}}</span> 
                     <span class="">Nice work on the lastest version</span>
@@ -31,7 +36,7 @@
         
     <div class="row-md-12">
         <div class="well">
-            <a href="http://brandonspencer.me">Made by Brandon Spencer</a>
+            <a href="http://brandonspencer.me">Made by Brandon Spencer</a> | <a href="https://github.com/doubldragon/gmail-clone">Fork it on Github!</a>
         </div>
     </div>
 </div>
