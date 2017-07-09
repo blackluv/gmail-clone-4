@@ -218,11 +218,17 @@ var emailController = function () {
         key: "showStarred",
         value: function showStarred(star) {
             var ctrl = this;
-            console.log("Starred: ", star);
-            if (ctrl.viewStarred && star || ctrl.viewStarred == false) {
-                return false;
+            // console.log ("Starred: ", star);
+            if (!ctrl.viewStarred) {
+                return star;
+            } else if (star) {
+                return star;
             }
-            return true;
+            return !star;
+            // if ((ctrl.viewStarred && star) || ctrl.viewStarred == false) {
+            //     return false;
+            // }
+            // return true;
         }
     }, {
         key: "changeStar",
