@@ -3,7 +3,7 @@ class sidebarController {
 		let ctrl = this;
 		ctrl.title = "Bmail";
 		ctrl.$rootScope = $rootScope;
-		
+		ctrl.activeNav= "inbox";
 		ctrl.$rootScope.$watch('unread', () => {
 			console.log('Updating Unreads');
 			ctrl.unread = ctrl.$rootScope.unread;

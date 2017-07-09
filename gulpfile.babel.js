@@ -8,6 +8,7 @@ import source from 'vinyl-source-stream';
 import sass from 'gulp-sass';
 import autoprefixer from 'gulp-autoprefixer';
 import concat from 'gulp-concat';
+var browserSync = require('browser-sync').create();
 
 const autoprefixerOptions = {
     browsers: [
@@ -23,24 +24,25 @@ const autoprefixerOptions = {
 };
 
 
-gulp.task('connect', () => {
-	connect.server({
-		livereload: true
-	});
+gulp.task('browserSync', () => {
+	 browserSync.init({
+        server: {
+            baseDir: ''
+        },
+    })
 	
 })
 
-gulp.task('default', ['connect','watch','bundle','css']);
+gulp.task('default', ['browserSync','bundle','css'], () => {
+	gulp.watch('app/**/*.html',browserSync.reload);
+	gulp.watch('app/**/*.css',browserSync.reload);
+});
 
 gulp.task('html', function () {
   gulp.src('**/*.html')
     .pipe(connect.reload());
 });
  
-gulp.task('watch', function () {
-  gulp.watch(['*.html'], ['html']);
-});
-
 gulp.task('bundle', () => {
 	let b = browserify({
 		entries : ['./app/app.js'],
@@ -86,3 +88,4 @@ gulp.task('sass', () => {
 gulp.task('css', () => {
 	gulp.watch('app/**/*.scss',['sass']);
 });
+
