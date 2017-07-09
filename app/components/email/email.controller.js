@@ -15,6 +15,10 @@ class emailController {
             ctrl.searchText = ctrl.$rootScope.searchText;
         });
 
+        ctrl.$rootScope.$watch('viewStarred', () => {
+            ctrl.viewStarred = ctrl.$rootScope.viewStarred;
+        });
+
         $interval(() => {ctrl.getEmails();}, 2000,[2]);
         ctrl.tabs = [{
             name: 'Primary',
@@ -94,12 +98,19 @@ class emailController {
         ctrl.$rootScope.emails = ctrl.emails;
 
     }
-
-    selectedTab(category) {
-        console.log("Should this email show: ", (ctrl.activeTab == category ? true : false));
-        return(ctrl.activeTab == category ? true : false);
+    updateTab(tabName) {
+        const ctrl = this;
+        ctrl.activeTab = tabName;
+    };
+    showStarred(starred) {
+        let ctrl = this;
+        console.log ("Starred: ", starred);
+        console.log ("viewStarred: ", ctrl.viewStarred);
+        if ((ctrl.viewStarred == true && starred == true) || ctrl.viewStarred == false) {
+            return false;
+        }
+        return true;
     }
-
 }
 
 export default emailController;

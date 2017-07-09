@@ -127,6 +127,10 @@ var emailController = function () {
             ctrl.searchText = ctrl.$rootScope.searchText;
         });
 
+        ctrl.$rootScope.$watch('viewStarred', function () {
+            ctrl.viewStarred = ctrl.$rootScope.viewStarred;
+        });
+
         $interval(function () {
             ctrl.getEmails();
         }, 2000, [2]);
@@ -206,10 +210,21 @@ var emailController = function () {
             ctrl.$rootScope.emails = ctrl.emails;
         }
     }, {
-        key: "selectedTab",
-        value: function selectedTab(category) {
-            console.log("Should this email show: ", ctrl.activeTab == category ? true : false);
-            return ctrl.activeTab == category ? true : false;
+        key: "updateTab",
+        value: function updateTab(tabName) {
+            var ctrl = this;
+            ctrl.activeTab = tabName;
+        }
+    }, {
+        key: "showStarred",
+        value: function showStarred(starred) {
+            var ctrl = this;
+            console.log("Starred: ", starred);
+            console.log("viewStarred: ", ctrl.viewStarred);
+            if (ctrl.viewStarred == true && starred == true || ctrl.viewStarred == false) {
+                return false;
+            }
+            return true;
         }
     }]);
 
@@ -219,7 +234,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" class=\"{active: $ctrl.activeTab === tab.name}\"  ng-click=\"$ctrl.activeTab=tab.name\">\n            <a href=\"#{{tab.name}}\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n\n            <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.searchText | filter: {category: $ctrl.activeTab}\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"email.starred= !email.starred\" ng-class=\"{starred : email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px;\n                                display: inline-block;\">{{email.name}}</span> <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n            </div>\n        </div>\n        \n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
+module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n\n            <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | filter: $ctrl.showStarred(email.starred) | filter: $ctrl.searchText | filter: {category: $ctrl.activeTab}\" ng-click=\"$ctrl.read(email.read=true)\" ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"email.starred= !email.starred\" \n                        ng-class=\"{starred :   email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                    <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n            </div>\n        </div>\n        \n    <div class=\"row-md-12\">\n        <div class=\"well\">\n            <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a>\n        </div>\n    </div>\n</div>\n</div>\n</div>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -321,29 +336,50 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var sidebarController = function sidebarController($rootScope, $interval) {
-	_classCallCheck(this, sidebarController);
+var sidebarController = function () {
+	function sidebarController($rootScope, $interval) {
+		_classCallCheck(this, sidebarController);
 
-	var ctrl = this;
-	ctrl.title = "Bmail";
-	ctrl.$rootScope = $rootScope;
-	ctrl.activeNav = "inbox";
-	ctrl.$rootScope.$watch('unread', function () {
-		console.log('Updating Unreads');
-		ctrl.unread = ctrl.$rootScope.unread;
-	});
+		var ctrl = this;
+		ctrl.title = "Bmail";
+		ctrl.$rootScope = $rootScope;
+		ctrl.activeNav = "Inbox";
+		ctrl.viewStarred = false;
+		ctrl.$rootScope.$watch('unread', function () {
+			console.log('Updating Unreads');
+			ctrl.unread = ctrl.$rootScope.unread;
+		});
 
-	// ctrl.$rootscope.$watch('starred', () => {
-	// 	console.log('updating starred emails');
-	// 	ctrl.emails = ctrl.$rootScope.emails;
-	// })
-};
+		// ctrl.$rootscope.$watch('starred', () => {
+		// 	console.log('updating starred emails');
+		// 	ctrl.emails = ctrl.$rootScope.emails;
+		// })
+	}
+
+	_createClass(sidebarController, [{
+		key: "toggleNav",
+		value: function toggleNav(selection) {
+			var ctrl = this;
+			if (selection === 'Starred') {
+				ctrl.viewStarred = true;
+			} else {
+				ctrl.viewStarred = false;
+			}
+			ctrl.$rootScope.viewStarred = ctrl.viewStarred;
+			ctrl.activeNav = selection;
+		}
+	}]);
+
+	return sidebarController;
+}();
 
 exports.default = sidebarController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n            <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n            <hr>\n            <ul class=\"nav nav-pills nav-stacked\">\n                <li id='inbox' class=\"{'active' : $ctrl.activeNav == item.id}\" ng-click=\"$ctrl.activeNav='inbox'\"><a href=\"#\">\n                    <span class=\"badge pull-right\">{{$ctrl.unread}}</span> Inbox </a></li>\n                <li id ='starred' class=\"{'active' : $ctrl.activeNav == item.id}\" ng-click=\"$ctrl.activeNav='starred'\"><a href=\"#\">Starred</a></li>\n                <li><a href=\"#\">Important</a></li>\n                <li><a href=\"#\">Sent Mail</a></li>\n                <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n            </ul>\n        </div>\n<!-- // -->\n";
+module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n            <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n            <hr>\n            <ul class=\"nav nav-pills nav-stacked\">\n                <li id='inbox' ng-class=\"{active : $ctrl.activeNav === 'Inbox'}\" ng-click=\"$ctrl.toggleNav('Inbox')\"><a href=\"#\">\n                    <span class=\"badge pull-right\">{{$ctrl.unread}}</span> Inbox </a></li>\n                <li id ='starred' ng-class=\"{active : $ctrl.activeNav === 'Starred'}\" ng-click=\"$ctrl.toggleNav('Starred')\"><a href=\"#\">Starred</a></li>\n                <li><a href=\"#\">Important</a></li>\n                <li><a href=\"#\">Sent Mail</a></li>\n                <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n            </ul>\n        </div>\n<!-- // -->\n";
 
 },{}]},{},[4]);

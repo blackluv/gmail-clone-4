@@ -2,9 +2,9 @@
             <a href="#" class="btn btn-danger btn-sm btn-block" role="button"><i class="glyphicon glyphicon-edit"></i> Compose</a>
             <hr>
             <ul class="nav nav-pills nav-stacked">
-                <li id='inbox' class="{'active' : $ctrl.activeNav == item.id}" ng-click="$ctrl.activeNav='inbox'"><a href="#">
+                <li id='inbox' ng-class="{active : $ctrl.activeNav === 'Inbox'}" ng-click="$ctrl.toggleNav('Inbox')"><a href="#">
                     <span class="badge pull-right">{{$ctrl.unread}}</span> Inbox </a></li>
-                <li id ='starred' class="{'active' : $ctrl.activeNav == item.id}" ng-click="$ctrl.activeNav='starred'"><a href="#">Starred</a></li>
+                <li id ='starred' ng-class="{active : $ctrl.activeNav === 'Starred'}" ng-click="$ctrl.toggleNav('Starred')"><a href="#">Starred</a></li>
                 <li><a href="#">Important</a></li>
                 <li><a href="#">Sent Mail</a></li>
                 <li><a href="#"><span class="badge pull-right">3</span>Drafts</a></li>
