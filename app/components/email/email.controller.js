@@ -105,22 +105,16 @@ class emailController {
     
     showStarred(star) {
         let ctrl = this;
-        // console.log ("Starred: ", star);
         if (!ctrl.viewStarred) {
             return star;
         } else if (star){
             return star;
         }
         return !star;
-        // if ((ctrl.viewStarred && star) || ctrl.viewStarred == false) {
-        //     return false;
-        // }
-        // return true;
     }
 
     changeStar(email) {
         email.starred = !email.starred;
-        console.log('!!!!!!!changing the star for: ', email.name);
     }
 }
 

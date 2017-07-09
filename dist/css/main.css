@@ -4,36 +4,6 @@ body {
 .nav-tabs .glyphicon:not(.no-margin) {
   margin-right: 10px; }
 
-hr {
-  margin-top: 5px;
-  margin-bottom: 10px; }
-
-.nav-pills > li > a {
-  padding: 5px 10px; }
-
-.ad {
-  padding: 5px;
-  background: #F5F5F5;
-  color: #222;
-  font-size: 80%;
-  border: 1px solid #E5E5E5; }
-
-.ad a.title {
-  color: #15C;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 110%; }
-
-.ad a.url {
-  color: #093;
-  text-decoration: none; }
-
-body {
-  margin-top: 50px; }
-
-.nav-tabs .glyphicon:not(.no-margin) {
-  margin-right: 10px; }
-
 .tab-pane .list-group-item:first-child {
   border-top-right-radius: 0px;
   border-top-left-radius: 0px; }
@@ -57,7 +27,7 @@ body {
 
 .read {
   color: red;
-  background-color: #C7D3DD; }
+  background-color: #E7E7E7; }
 
 hr {
   margin-top: 5px;
@@ -91,6 +61,9 @@ hr {
   color: #fff;
   background-color: #ccc; }
 
+#primary {
+  padding-bottom: 60px; }
+
 .top-row {
   margin-top: 10px;
   padding-top: 15px;
@@ -116,3 +89,33 @@ hr {
   margin-right: 30px;
   height: 90px;
   width: 110px; }
+
+body {
+  margin-top: 50px; }
+
+.nav-tabs .glyphicon:not(.no-margin) {
+  margin-right: 10px; }
+
+hr {
+  margin-top: 5px;
+  margin-bottom: 10px; }
+
+.nav-pills > li > a {
+  padding: 5px 10px; }
+
+.ad {
+  padding: 5px;
+  background: #F5F5F5;
+  color: #222;
+  font-size: 80%;
+  border: 1px solid #E5E5E5; }
+
+.ad a.title {
+  color: #15C;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 110%; }
+
+.ad a.url {
+  color: #093;
+  text-decoration: none; }

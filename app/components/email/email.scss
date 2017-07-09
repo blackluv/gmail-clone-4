@@ -6,7 +6,7 @@ body{ margin-top:50px;}
 .tab-pane .list-group input[type="checkbox"]{ margin-top: 2px; }
 .tab-pane .list-group .glyphicon { margin-right:5px; }
 .tab-pane .list-group .glyphicon:hover { color:#FFBC00; }
-.read { color: red; background-color: #C7D3DD; }
+.read { color: red; background-color: #E7E7E7; }
 hr { margin-top: 5px;margin-bottom: 10px; }
 .nav-pills>li>a {padding: 5px 10px;}
 .glyphicon-star {color: #ccc; margin-left: 10px; margin-right: 45px;}
@@ -16,3 +16,6 @@ hr { margin-top: 5px;margin-bottom: 10px; }
 .name {margin-left: 10px;}
 .starred {color: #FFBC00;}
 .selectedTab {color: #fff; background-color: #ccc;}
+// .panel-footer {position: fixed; bottom: 0; width 100%;}
+// .well {margin-bottom: 0;  padding-top: 9px; padding-bottom: 9px; }
+#primary{padding-bottom: 60px;}
