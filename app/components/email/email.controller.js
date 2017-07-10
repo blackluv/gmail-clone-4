@@ -20,6 +20,9 @@ class emailController {
             ctrl.viewStarred = ctrl.$rootScope.viewStarred;
         });
 
+        ctrl.$rootScope.$watch('compose', () => {
+            ctrl.compose = ctrl.$rootScope.compose;
+        });
         
         ctrl.tabs = [{
             name: 'Primary',
@@ -115,6 +118,12 @@ class emailController {
 
     changeStar(email) {
         email.starred = !email.starred;
+    }
+
+    toggleCompose(compose) {
+        let ctrl = this;
+        ctrl.compose = compose;
+        ctrl.$rootScope.compose = ctrl.compose;
     }
 }
 

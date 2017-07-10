@@ -65,7 +65,6 @@ var _email2 = _interopRequireDefault(_email);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-console.log("In app.js");
 angular.module('app', []).component('app', _app2.default).component('navbar', _navbar2.default).component('sidebar', _sidebar2.default).component('email', _email2.default);
 
 },{"./app.component":1,"./components/email/email.component":5,"./components/navbar/navbar.component":8,"./components/sidebar/sidebar.component":11}],5:[function(require,module,exports){
@@ -132,6 +131,10 @@ var emailController = function () {
 
         ctrl.$rootScope.$watch('viewStarred', function () {
             ctrl.viewStarred = ctrl.$rootScope.viewStarred;
+        });
+
+        ctrl.$rootScope.$watch('compose', function () {
+            ctrl.compose = ctrl.$rootScope.compose;
         });
 
         ctrl.tabs = [{
@@ -230,6 +233,13 @@ var emailController = function () {
         value: function changeStar(email) {
             email.starred = !email.starred;
         }
+    }, {
+        key: "toggleCompose",
+        value: function toggleCompose(compose) {
+            var ctrl = this;
+            ctrl.compose = compose;
+            ctrl.$rootScope.compose = ctrl.compose;
+        }
     }]);
 
     return emailController;
@@ -238,7 +248,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div>\n    <!-- class=\"col-sm-9 col-md-10\" -->\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n\n            <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | \n                    filter: {starred: $ctrl.showStarred(starred)} | \n                    filter: $ctrl.searchText | \n                    filter: {category: $ctrl.activeTab}\" \n                    ng-click=\"$ctrl.read(email.read=true)\" \n                    ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"$ctrl.changeStar(email)\" \n                        ng-class=\"{starred :   email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                    <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n\n            </div>\n            \n            <div class=\"panel-footer\">\n                <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a> | \n                <a href=\"https://github.com/doubldragon/gmail-clone\">Fork it on Github!</a>\n            </div>\n            \n        </div>\n        \n\n</div>\n</div>\n    \n";
+module.exports = "<div ng-show='$ctrl.compose'>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">TO: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Recipient\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">CC: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Other Recipients\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\" id=\"basic-addon1\">Subject: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Enter Subject Here...\">\n    </div>\n    <div class=\"compose form-group\">\n        <textarea class=\"form-control\" rows=\"10\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"composeButtons\">\n    <button class=\"btn btn-primary \"><span class=\"glyphicon glyphicon-send\" aria-hidden=\"true\"> </span> Send </button>\n    <button class=\"btn btn-default\"><span class=\"glyphicon glyphicon-floppy-disk\" aria-hidden=\"true\"> </span> Save </button>\n    <button class=\"btn btn-danger\" ng-click=\"$ctrl.toggleCompose($ctrl.compose = false)\"><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"> </span> Discard </button>\n    </div>\n</div>\n\n\n<div ng-show='!$ctrl.compose'>\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n        <!-- Placeholder for future option to add tabs -->\n        <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                <a href=\"#\" class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | \n                    filter: {starred: $ctrl.showStarred(starred)} | \n                    filter: $ctrl.searchText | \n                    filter: {category: $ctrl.activeTab}\" \n                    ng-click=\"$ctrl.read(email.read=true)\" \n                    ng-class=\"{read : email.read}\">\n                    <label>\n                        <input type=\"checkbox\">\n                    </label>\n                    <span class=\"glyphicon glyphicon-star\" ng-click=\"$ctrl.changeStar(email)\" \n                        ng-class=\"{starred :   email.starred}\"></span>\n                    <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                    <span class=\"\">Nice work on the lastest version</span>\n                    <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                    <span class=\"badge\">{{email.time}}</span> \n                    <span class=\"pull-right\">\n                        <span class=\"glyphicon glyphicon-paperclip\"></span>\n                    </span>\n                </a>\n\n            </div>\n            \n            <div class=\"panel-footer\">\n                <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a> | \n                <a href=\"https://github.com/doubldragon/gmail-clone\">Fork it on Github!</a>\n            </div>\n            \n        </div>\n        \n\n</div>\n</div>\n    \n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -353,16 +363,24 @@ var sidebarController = function () {
 		ctrl.$rootScope = $rootScope;
 		ctrl.activeNav = "Inbox";
 		ctrl.viewStarred = false;
+		ctrl.compose = false;
 		ctrl.$rootScope.$watch('unread', function () {
 			ctrl.unread = ctrl.$rootScope.unread;
 		});
 		ctrl.toggleNav("Inbox");
+		ctrl.toggleCompose(ctrl.compose);
+
+		ctrl.$rootScope.$watch('compose', function () {
+			ctrl.compose = ctrl.$rootScope.compose;
+			ctrl.toggleCompose(ctrl.compose);
+		});
 	}
 
 	_createClass(sidebarController, [{
 		key: "toggleNav",
 		value: function toggleNav(selection) {
 			var ctrl = this;
+			ctrl.toggleCompose(ctrl.compose = false);
 			if (selection === 'Starred') {
 				ctrl.viewStarred = true;
 			} else {
@@ -370,6 +388,13 @@ var sidebarController = function () {
 			}
 			ctrl.$rootScope.viewStarred = ctrl.viewStarred;
 			ctrl.activeNav = selection;
+		}
+	}, {
+		key: "toggleCompose",
+		value: function toggleCompose(compose) {
+			var ctrl = this;
+			ctrl.compose = compose;
+			ctrl.$rootScope.compose = ctrl.compose;
 		}
 	}]);
 
@@ -379,6 +404,6 @@ var sidebarController = function () {
 exports.default = sidebarController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n    <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n    <hr>\n    <ul class=\"nav nav-pills nav-stacked\">\n        <li id='inbox' ng-class=\"{active : $ctrl.activeNav === 'Inbox'}\" ng-click=\"$ctrl.toggleNav('Inbox')\"><a href=\"#\">\n            <span class=\"badge pull-right\">{{$ctrl.unread}}</span> Inbox </a></li>\n        <li id ='starred' ng-class=\"{active : $ctrl.activeNav === 'Starred'}\" \n            ng-click=\"$ctrl.toggleNav('Starred')\"><a href=\"#\">Starred</a>\n        </li>\n        <li><a href=\"#\">Sent Mail</a></li>\n        <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n    </ul>\n</div>\n        \n";
+module.exports = "<div > <!-- class=\"col-sm-3 col-md-2\" -->\n    <a href=\"#\" class=\"btn btn-danger btn-sm btn-block\" role=\"button\" ng-click=\"$ctrl.toggleCompose($ctrl.compose = true)\"><i class=\"glyphicon glyphicon-edit\"></i> Compose</a>\n    <hr>\n    <ul class=\"nav nav-pills nav-stacked\">\n        <li id='inbox' ng-class=\"{active : $ctrl.activeNav === 'Inbox'}\" ng-click=\"$ctrl.toggleNav('Inbox')\"><a href=\"#\">\n            <span class=\"badge pull-right\">{{$ctrl.unread}}</span> Inbox </a></li>\n        <li id ='starred' ng-class=\"{active : $ctrl.activeNav === 'Starred'}\" \n            ng-click=\"$ctrl.toggleNav('Starred')\"><a href=\"#\">Starred</a>\n        </li>\n        <li><a href=\"#\">Sent Mail</a></li>\n        <li><a href=\"#\"><span class=\"badge pull-right\">3</span>Drafts</a></li>\n    </ul>\n</div>\n\n";
 
 },{}]},{},[4]);
