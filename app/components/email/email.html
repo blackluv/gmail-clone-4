@@ -1,4 +1,4 @@
-<div ng-show='$ctrl.compose'>
+<div ng-show="$ctrl.viewPane == 'message'">
     <div class="compose input-group">
         <span class="input-group-addon" id="basic-addon1">TO: </span>
         <input type="text" class="form-control" placeholder="Recipient">
@@ -17,12 +17,35 @@
     <div class="composeButtons">
     <button class="btn btn-primary "><span class="glyphicon glyphicon-send" aria-hidden="true"> </span> Send </button>
     <button class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> </span> Save </button>
-    <button class="btn btn-danger" ng-click="$ctrl.toggleCompose($ctrl.compose = false)"><span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Discard </button>
+    <button class="btn btn-danger" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'inbox')"><span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Discard </button>
+    </div>
+</div>
+
+<div ng-show="$ctrl.viewPane == 'compose'">
+    <div class="compose input-group">
+        <span class="input-group-addon" id="basic-addon1">TO: </span>
+        <input type="text" class="form-control" placeholder="Recipient">
+    </div>
+    <div class="compose input-group">
+        <span class="input-group-addon" id="basic-addon1">CC: </span>
+        <input type="text" class="form-control" placeholder="Other Recipients">
+    </div>
+    <div class="compose input-group">
+        <span class="input-group-addon" id="basic-addon1">Subject: </span>
+        <input type="text" class="form-control" placeholder="Enter Subject Here...">
+    </div>
+    <div class="compose form-group">
+        <textarea class="form-control" rows="10" id="comment"></textarea>
+    </div>
+    <div class="composeButtons">
+    <button class="btn btn-primary "><span class="glyphicon glyphicon-send" aria-hidden="true"> </span> Send </button>
+    <button class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> </span> Save </button>
+    <button class="btn btn-danger" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'inbox')"><span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Discard </button>
     </div>
 </div>
 
 
-<div ng-show='!$ctrl.compose'>
+<div ng-show="$ctrl.viewPane=='inbox'">
     <ul class="nav nav-tabs">
         <li ng-repeat="tab in $ctrl.tabs" ng-click="$ctrl.updateTab(tab.name)" ng-class="{active: $ctrl.activeTab === tab.name}">
             <a href="#" data-toggle="tab"><span class="glyphicon {{tab.icon}}"></span>{{tab.name}}</a>
@@ -39,8 +62,10 @@
                     filter: {starred: $ctrl.showStarred(starred)} | 
                     filter: $ctrl.searchText | 
                     filter: {category: $ctrl.activeTab}" 
-                    ng-click="$ctrl.read(email.read=true)" 
-                    ng-class="{read : email.read}">
+                    ng-click="$ctrl.read(email.read=true, $ctrl.viewPane = 'message')" 
+                    ng-class="{read : email.read}"
+                    
+                    >
                     <label>
                         <input type="checkbox">
                     </label>

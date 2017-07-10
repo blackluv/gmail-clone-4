@@ -20,8 +20,8 @@ class emailController {
             ctrl.viewStarred = ctrl.$rootScope.viewStarred;
         });
 
-        ctrl.$rootScope.$watch('compose', () => {
-            ctrl.compose = ctrl.$rootScope.compose;
+        ctrl.$rootScope.$watch('viewPane', () => {
+            ctrl.viewPane = ctrl.$rootScope.viewPane;
         });
         
         ctrl.tabs = [{
@@ -92,6 +92,7 @@ class emailController {
             }
         });
         ctrl.$rootScope.unread = ctrl.unread;
+        ctrl.toggleCompose(ctrl.viewPane);
     }
 
     starredEmail(email) {
@@ -120,10 +121,11 @@ class emailController {
         email.starred = !email.starred;
     }
 
-    toggleCompose(compose) {
+    toggleCompose(viewPane) {
         let ctrl = this;
-        ctrl.compose = compose;
-        ctrl.$rootScope.compose = ctrl.compose;
+        console.log(viewPane);
+        ctrl.viewPane = viewPane;
+        ctrl.$rootScope.viewPane = viewPane;
     }
 }
 

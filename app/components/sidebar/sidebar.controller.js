@@ -5,22 +5,22 @@ class sidebarController {
 		ctrl.$rootScope = $rootScope;
 		ctrl.activeNav= "Inbox";
 		ctrl.viewStarred = false;
-		ctrl.compose = false;
+		ctrl.viewPane = 'inbox';
 		ctrl.$rootScope.$watch('unread', () => {
 			ctrl.unread = ctrl.$rootScope.unread;
 		});
 		ctrl.toggleNav("Inbox");
-		ctrl.toggleCompose(ctrl.compose);
+		ctrl.toggleCompose(ctrl.viewPane);
 
-		ctrl.$rootScope.$watch('compose', () => {
-            ctrl.compose = ctrl.$rootScope.compose;
-            ctrl.toggleCompose(ctrl.compose);
+		ctrl.$rootScope.$watch('viewPane', () => {
+            ctrl.viewPane = ctrl.$rootScope.viewPane;
+            ctrl.toggleCompose(ctrl.viewPane);
         });
 	};
 
 	toggleNav(selection) {
 			let ctrl = this;
-			ctrl.toggleCompose(ctrl.compose = false);
+			ctrl.toggleCompose(ctrl.viewPane = 'inbox');
 			if (selection === 'Starred') {
 				ctrl.viewStarred = true;
 			} else {
@@ -30,10 +30,9 @@ class sidebarController {
 			ctrl.activeNav = selection;
 		}
 	
-	toggleCompose(compose) {
+	toggleCompose(viewPane) {
 		let ctrl = this;
-		ctrl.compose = compose;
-		ctrl.$rootScope.compose = ctrl.compose;
+		ctrl.$rootScope.viewPane = viewPane;
 	}
 }
 
