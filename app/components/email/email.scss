@@ -1,12 +1,15 @@
 body{ margin-top:50px;}
 .nav-tabs .glyphicon:not(.no-margin) { margin-right:10px; }
+.tab-pane .list-group-item {padding-top: 0; padding-bottom: 0;}
+.tab-pane .list-group-item .row {margin: 0;}
+.tab-pane .list-group-item .col { display: inline-block; cursor: pointer; padding-bottom: 10px; padding-top: 10px;}
 .tab-pane .list-group-item:first-child {border-top-right-radius: 0px;border-top-left-radius: 0px;}
 .tab-pane .list-group-item:last-child {border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
 .tab-pane .list-group .checkbox { display: inline-block;margin: 0px; }
 .tab-pane .list-group input[type="checkbox"]{ margin-top: 2px; }
 .tab-pane .list-group .glyphicon { margin-right:5px; }
 .tab-pane .list-group .glyphicon:hover { color:#FFBC00; }
-.read { color: red; background-color: #E7E7E7; }
+.read {background-color: #E7E7E7; }
 hr { margin-top: 5px;margin-bottom: 10px; }
 .nav-pills>li>a {padding: 5px 10px;}
 .glyphicon-star {color: #ccc; margin-left: 10px; margin-right: 45px;}
@@ -20,3 +23,6 @@ hr { margin-top: 5px;margin-bottom: 10px; }
 // .well {margin-bottom: 0;  padding-top: 9px; padding-bottom: 9px; }
 #primary{padding-bottom: 60px;}
 .compose {margin-top: 20px; margin-bottom: 20px;}
+.badge { float: right;}
+.emailPreview { flex-direction: row;}
+label {margin: 0;}

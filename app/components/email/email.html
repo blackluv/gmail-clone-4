@@ -58,27 +58,57 @@
     <div class="tab-content">
         <div class="tab-pane fade in active" id="primary" ><!-- ng-show="$ctrl.activeTab==='primary'"> -->
             <div class="list-group">
-                <a href="#" class="list-group-item" ng-repeat="email in $ctrl.emails | 
+                <div class="list-group-item" ng-repeat="email in $ctrl.emails | 
                     filter: {starred: $ctrl.showStarred(starred)} | 
                     filter: $ctrl.searchText | 
                     filter: {category: $ctrl.activeTab}" 
-                    ng-click="$ctrl.read(email.read=true, $ctrl.viewPane = 'message')" 
-                    ng-class="{read : email.read}"
                     
+                    ng-class="{read : email.read}"
                     >
-                    <label>
-                        <input type="checkbox">
-                    </label>
-                    <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
-                        ng-class="{starred :   email.starred}"></span>
-                    <span class="name" style="min-width: 120px; display: inline-block;">{{email.name}}</span> 
-                    <span class="">Nice work on the lastest version</span>
-                    <span class="text-muted" style="font-size: 11px;">- lorem ipsum {{email.starred}}</span> 
-                    <span class="badge">{{email.time}}</span> 
-                    <span class="pull-right">
-                        <span class="glyphicon glyphicon-paperclip"></span>
-                    </span>
-                </a>
+                    <div class="row">
+                        <div class="col col-xs-1">
+                            <label>
+                                <input type="checkbox">
+                            </label>
+                            <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
+                            ng-class="{starred :   email.starred}"></span>
+                        </div>
+                        
+                        <div class="col col-xs-9    " ng-click="$ctrl.read(email.read=true, $ctrl.viewPane = 'message')" >
+                            <span class="name" style="min-width: 120px; display: inline-block;">{{email.name}}</span> 
+                            <span class="">Nice work on the lastest version</span>
+                            <span class="text-muted" style="font-size: 11px;">- lorem ipsum {{email.starred}}</span> 
+                            
+                        </div>
+                        <div class="col col-xs-2 pull-right">
+                        <span class="badge">{{email.time}}</span> 
+                        <span class="">
+                            <span class="glyphicon glyphicon-paperclip"></span>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                    <!-- <a href="#" class="list-group-item" ng-repeat="email in $ctrl.emails | 
+                        filter: {starred: $ctrl.showStarred(starred)} | 
+                        filter: $ctrl.searchText | 
+                        filter: {category: $ctrl.activeTab}" 
+                        ng-click="$ctrl.read(email.read=true, $ctrl.viewPane = 'message')" 
+                        ng-class="{read : email.read}"
+                        
+                        >
+                        <label>
+                            <input type="checkbox">
+                        </label>
+                        <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
+                            ng-class="{starred :   email.starred}"></span>
+                        <span class="name" style="min-width: 120px; display: inline-block;">{{email.name}}</span> 
+                        <span class="">Nice work on the lastest version</span>
+                        <span class="text-muted" style="font-size: 11px;">- lorem ipsum {{email.starred}}</span> 
+                        <span class="badge">{{email.time}}</span> 
+                        <span class="pull-right">
+                            <span class="glyphicon glyphicon-paperclip"></span>
+                        </span>
+                    </a> -->
 
             </div>
             
