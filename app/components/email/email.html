@@ -7,11 +7,18 @@
 <div ng-show="$ctrl.viewPane == 'message'">
     <div class='panel panel-default'>
         <div class='panel-heading'>
-            <div style='display:inline-block;'>From: {{$ctrl.sender}} ({{$ctrl.senderEmail}})</div>
-            <span class='pull-right'>{{$ctrl.time}}</span><br /><br />
-            <div>CC: </div><br />
-            <div>Subject: {{$ctrl.subject}}</div>  
+            <div class="row">
+            <div class='col col-md-1' style='display: inline-block;'>
+                <img src='{{$ctrl.thumb}}'>
+            </div>
 
+            <div class='col col-md-11' style='display:inline-block;'>
+                <div style='display:inline-block;'>From: {{$ctrl.sender}} ({{$ctrl.senderEmail}})</div>
+                <span class='pull-right'>{{$ctrl.time}}</span> <br /><br />
+                <div>CC: </div><br />
+                <div>Subject: {{$ctrl.subject}}</div>  
+            </div>
+            </div>
         </div>
         <div class='panel-body'>
             <p>{{$ctrl.body}}</p>
@@ -90,16 +97,16 @@
                             <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
                             ng-class="{starred :   email.starred}"></span>
                         </div>
-                        <div class="col col-xs-9    " ng-click="$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')" >
-                            <span class="name" style="min-width: 120px; display: inline-block;">{{email.name}}</span> 
-                            <span class="">Nice work on the lastest version</span>
-                            <span class="text-muted" style="font-size: 11px;">- lorem ipsum {{email.starred}}</span> 
+                        <div class="col col-xs-2" ng-click="$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')" >
+                            <span class="name" style="min-width: 150px; display: inline-block;">{{email.name}}</span> 
+                        </div>
+                        <div class="col col-xs-7" ng-click="$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')" >
+                            
+                            <span class="">{{email.subject}}</span>
+                            <span class="text-muted" style="font-size: 11px;">- {{email.preview}}</span> 
                         </div>
                         <div class="col col-xs-2 pull-right">
                         <span class="badge">{{email.time}}</span> 
-                        <span class="">
-                            <span class="glyphicon glyphicon-paperclip"></span>
-                        </span>
                         </div>
                     </div>
                 </div>

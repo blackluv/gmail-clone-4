@@ -1,9 +1,10 @@
 class emailController {
-    constructor($rootScope, $interval, $http) {
+    constructor($rootScope, $interval, $http, $q) {
         let ctrl = this;
         ctrl.title = "BMail";
         ctrl.$rootScope = $rootScope;
-        ctrl.$http = $http
+        ctrl.$http = $http;
+        ctrl.$q = $q;
         ctrl.emails = [];
         ctrl.emailData;
         ctrl.getEmails();
@@ -40,46 +41,53 @@ class emailController {
     //Makes the API call to get info for email
     getEmails() {
         //ADD multiple API call for email subject/ content
-
-        let ctrl = this;
-        ctrl.$http ({
-            method: 'GET',
-            url: 'https://randomuser.me/api/?results=2&nat=us',
-            dataType: 'json'
-        }).then(function success(data) {
+         let ctrl = this;
+         ctrl.$q.all([
+                ctrl.$http.get('https://randomuser.me/api/?nat=us'),
+                ctrl.$http.get('https://baconipsum.com/api/?type=meat-and-filler&paras=1'),
+                ctrl.$http.get('http://www.randomtext.me/api/gibberish/p-1/3-6')
+            ])
+        
+        .then(function success(data) {
                 ctrl.processEmails(data,ctrl.tabs);
-            })
-
-
+            });
     }
-    //parses json data into array of emails
     processEmails(emailData,tabs) {
         let ctrl = this;
+        let tag = tabs[Math.floor(Math.random() * tabs.length)].name;
         let now = new Date();
-        emailData.data.results.forEach(each => {
-                let tag = tabs[Math.floor(Math.random() * tabs.length)].name;
-                ctrl.emails.push({
-                    name: each.name.first + ' ' + each.name.last,
-                    email: each.email,
-                    read: false,
-                    starred: false,
-                    category: tag,
-                    time: [
+        let sub = emailData[2].data.text_out
+        let subject = sub.substring(3,sub.length-6);
+        let preview = emailData[1].data[0].slice(0,30) + '...';
+        let fullname = emailData[0].data.results[0].name.first.charAt(0).toUpperCase() + 
+                       emailData[0].data.results[0].name.first.slice(1) + ' ' + 
+                       emailData[0].data.results[0].name.last.charAt(0).toUpperCase() + 
+                       emailData[0].data.results[0].name.last.slice(1);
+
+        let email = {
+            name: fullname,
+            email: emailData[0].data.results[0].email,
+            read: false,
+            starred: false,
+            category: tag,
+            time: [
                         [now.getMonth() + 1,
                          now.getDate()]
                          .join("/"), [AddZero(now.getHours()),
                             AddZero(now.getMinutes())
                         ].join(":"),
                         now.getHours() >= 12 ? "PM" : "AM"
-                    ].join(" ")
-                });
-            }
-
-        );
+                    ].join(" "),
+            subject: subject,
+            body: emailData[1].data[0],
+            preview: preview,
+            thumbnail: emailData[0].data.results[0].picture.thumbnail
+        };
 
         function AddZero(num) {
             return (num >= 0 && num < 10) ? "0" + num : num + "";
             }
+        ctrl.emails.push(email);
         ctrl.read();
     }
 
@@ -94,7 +102,6 @@ class emailController {
         });
         ctrl.$rootScope.unread = ctrl.unread;
         ctrl.toggleCompose(ctrl.viewPane);
-        
     }
 
     readMessage(email) {
@@ -103,17 +110,9 @@ class emailController {
         ctrl.sender = email.name;
         ctrl.senderEmail = email.email;
         ctrl.time = email.time;
-        ctrl.subject = "This is the subject";
-        ctrl.body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quibusnam praeteritis? Quo tandem modo? Sed virtutem ipsam inchoavit, nihil amplius. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Quod ea non occurrentia fingunt, vincunt Aristonem; Positum est a nostris in iis esse rebus, quae secundum naturam essent, non dolere; Duo Reges: constructio interrete. Non igitur de improbo, sed de callido improbo quaerimus, qualis Q. Maximas vero virtutes iacere omnis necesse est voluptate dominante. Illis videtur, qui illud non dubitant bonum dicere -; Eaedem enim utilitates poterunt eas labefactare atque pervertere. Que Manilium, ab iisque M. Ita multa dicunt, quae vix intellegam. Quos quidem tibi studiose et diligenter tractandos magnopere censeo. Quid de Pythagora? Qui autem diffidet perpetuitati bonorum suorum, timeat necesse est, ne aliquando amissis illis sit miser. Consequens enim est et post oritur, ut dixi. Illis videtur, qui illud non dubitant bonum dicere -; Hoc non est positum in nostra actione. Quoniam, si dis placet, ab Epicuro loqui discimus. Sed nunc, quod agimus; Ut pulsi recurrant? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Si quae forte-possumus. Sed plane dicit quod intellegit. Sed tempus est, si videtur, et recta quidem ad me. Tibi hoc incredibile, quod beatissimum. Iam id ipsum absurdum, maximum malum neglegi. Septem autem illi non suo, sed populorum suffragio omnium nominati sunt. Non ego tecum iam ita iocabor, ut isdem his de rebus, cum L. Quid igitur, inquit, eos responsuros putas? Non est igitur summum malum dolor. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse?";
-
-    }
-
-    starredEmail(email) {
-        let ctrl = this;
-        console.log("email: ", email);
-        email.starred = !email.starred;
-        ctrl.$rootScope.emails = ctrl.emails;
-
+        ctrl.subject = email.subject;
+        ctrl.body = email.body;
+        ctrl.thumb = email.thumbnail;
     }
     updateTab(tabName) {
         const ctrl = this;

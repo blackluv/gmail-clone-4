@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$interval', '$http'];
+_app4.default.$inject = ['$rootScope', '$interval', '$http', '$q'];
 
 var appComponent = {
 	template: _app2.default,
@@ -87,7 +87,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var emailComponent = {
 	bindings: {},
 	template: _email2.default,
-	controller: ['$rootScope', '$interval', '$http', _email4.default],
+	controller: ['$rootScope', '$interval', '$http', '$q', _email4.default],
 	controllerAs: '$ctrl'
 
 };
@@ -106,13 +106,14 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var emailController = function () {
-    function emailController($rootScope, $interval, $http) {
+    function emailController($rootScope, $interval, $http, $q) {
         _classCallCheck(this, emailController);
 
         var ctrl = this;
         ctrl.title = "BMail";
         ctrl.$rootScope = $rootScope;
         ctrl.$http = $http;
+        ctrl.$q = $q;
         ctrl.emails = [];
         ctrl.emailData;
         ctrl.getEmails();
@@ -157,38 +158,39 @@ var emailController = function () {
         key: "getEmails",
         value: function getEmails() {
             //ADD multiple API call for email subject/ content
-
             var ctrl = this;
-            ctrl.$http({
-                method: 'GET',
-                url: 'https://randomuser.me/api/?results=2&nat=us',
-                dataType: 'json'
-            }).then(function success(data) {
+            ctrl.$q.all([ctrl.$http.get('https://randomuser.me/api/?nat=us'), ctrl.$http.get('https://baconipsum.com/api/?type=meat-and-filler&paras=1'), ctrl.$http.get('http://www.randomtext.me/api/gibberish/p-1/3-6')]).then(function success(data) {
                 ctrl.processEmails(data, ctrl.tabs);
             });
         }
-        //parses json data into array of emails
-
     }, {
         key: "processEmails",
         value: function processEmails(emailData, tabs) {
             var ctrl = this;
+            var tag = tabs[Math.floor(Math.random() * tabs.length)].name;
             var now = new Date();
-            emailData.data.results.forEach(function (each) {
-                var tag = tabs[Math.floor(Math.random() * tabs.length)].name;
-                ctrl.emails.push({
-                    name: each.name.first + ' ' + each.name.last,
-                    email: each.email,
-                    read: false,
-                    starred: false,
-                    category: tag,
-                    time: [[now.getMonth() + 1, now.getDate()].join("/"), [AddZero(now.getHours()), AddZero(now.getMinutes())].join(":"), now.getHours() >= 12 ? "PM" : "AM"].join(" ")
-                });
-            });
+            var sub = emailData[2].data.text_out;
+            var subject = sub.substring(3, sub.length - 6);
+            var preview = emailData[1].data[0].slice(0, 30) + '...';
+            var fullname = emailData[0].data.results[0].name.first.charAt(0).toUpperCase() + emailData[0].data.results[0].name.first.slice(1) + ' ' + emailData[0].data.results[0].name.last.charAt(0).toUpperCase() + emailData[0].data.results[0].name.last.slice(1);
+
+            var email = {
+                name: fullname,
+                email: emailData[0].data.results[0].email,
+                read: false,
+                starred: false,
+                category: tag,
+                time: [[now.getMonth() + 1, now.getDate()].join("/"), [AddZero(now.getHours()), AddZero(now.getMinutes())].join(":"), now.getHours() >= 12 ? "PM" : "AM"].join(" "),
+                subject: subject,
+                body: emailData[1].data[0],
+                preview: preview,
+                thumbnail: emailData[0].data.results[0].picture.thumbnail
+            };
 
             function AddZero(num) {
                 return num >= 0 && num < 10 ? "0" + num : num + "";
             }
+            ctrl.emails.push(email);
             ctrl.read();
         }
     }, {
@@ -213,16 +215,9 @@ var emailController = function () {
             ctrl.sender = email.name;
             ctrl.senderEmail = email.email;
             ctrl.time = email.time;
-            ctrl.subject = "This is the subject";
-            ctrl.body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quibusnam praeteritis? Quo tandem modo? Sed virtutem ipsam inchoavit, nihil amplius. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Quod ea non occurrentia fingunt, vincunt Aristonem; Positum est a nostris in iis esse rebus, quae secundum naturam essent, non dolere; Duo Reges: constructio interrete. Non igitur de improbo, sed de callido improbo quaerimus, qualis Q. Maximas vero virtutes iacere omnis necesse est voluptate dominante. Illis videtur, qui illud non dubitant bonum dicere -; Eaedem enim utilitates poterunt eas labefactare atque pervertere. Que Manilium, ab iisque M. Ita multa dicunt, quae vix intellegam. Quos quidem tibi studiose et diligenter tractandos magnopere censeo. Quid de Pythagora? Qui autem diffidet perpetuitati bonorum suorum, timeat necesse est, ne aliquando amissis illis sit miser. Consequens enim est et post oritur, ut dixi. Illis videtur, qui illud non dubitant bonum dicere -; Hoc non est positum in nostra actione. Quoniam, si dis placet, ab Epicuro loqui discimus. Sed nunc, quod agimus; Ut pulsi recurrant? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Si quae forte-possumus. Sed plane dicit quod intellegit. Sed tempus est, si videtur, et recta quidem ad me. Tibi hoc incredibile, quod beatissimum. Iam id ipsum absurdum, maximum malum neglegi. Septem autem illi non suo, sed populorum suffragio omnium nominati sunt. Non ego tecum iam ita iocabor, ut isdem his de rebus, cum L. Quid igitur, inquit, eos responsuros putas? Non est igitur summum malum dolor. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse?";
-        }
-    }, {
-        key: "starredEmail",
-        value: function starredEmail(email) {
-            var ctrl = this;
-            console.log("email: ", email);
-            email.starred = !email.starred;
-            ctrl.$rootScope.emails = ctrl.emails;
+            ctrl.subject = email.subject;
+            ctrl.body = email.body;
+            ctrl.thumb = email.thumbnail;
         }
     }, {
         key: "updateTab",
@@ -261,7 +256,7 @@ var emailController = function () {
 exports.default = emailController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- Pane to view an Email in detail -->\n<div ng-show=\"$ctrl.viewPane == 'develop'\">\n    <h1>This feature is still under development. </h1>\n    <hr>\n    <button class=\"btn btn-primary\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'inbox')\"><span class=\"glyphicon glyphicon-inbox\" aria-hidden=\"true\"> </span> Back to Inbox</button>\n</div>\n<div ng-show=\"$ctrl.viewPane == 'message'\">\n    <div class='panel panel-default'>\n        <div class='panel-heading'>\n            <div style='display:inline-block;'>From: {{$ctrl.sender}} ({{$ctrl.senderEmail}})</div>\n            <span class='pull-right'>{{$ctrl.time}}</span><br /><br />\n            <div>CC: </div><br />\n            <div>Subject: {{$ctrl.subject}}</div>  \n\n        </div>\n        <div class='panel-body'>\n            <p>{{$ctrl.body}}</p>\n            <hr>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-reply fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-reply-all fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-share fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Pane to compose Email -->\n\n<div ng-show=\"$ctrl.viewPane == 'compose'\">\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">TO: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Recipient\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">CC: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Other Recipients\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">Subject: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Enter Subject Here...\">\n    </div>\n    <div class=\"compose form-group\">\n        <textarea class=\"form-control\" rows=\"10\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"composeButtons\">\n    <button class=\"btn btn-primary\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n        <span class=\"glyphicon glyphicon-send\" aria-hidden=\"true\"> </span> Send \n    </button>\n    <button class=\"btn btn-default\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n        <span class=\"glyphicon glyphicon-floppy-disk\" aria-hidden=\"true\"> </span> Save \n    </button>\n    <button class=\"btn btn-danger\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'inbox')\">\n        <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"> </span> Discard \n    </button>\n    </div>\n</div>\n\n<!-- Pane to view inbox -->\n\n<div ng-show=\"$ctrl.viewPane=='inbox'\">\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n        <!-- Placeholder for future option to add tabs -->\n        <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                \n                <div class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | \n                    filter: {starred: $ctrl.showStarred(starred)} | \n                    filter: $ctrl.searchText | \n                    filter: {category: $ctrl.activeTab}\" \n                    ng-class=\"{read : email.read}\"   >\n                    \n                    <div class=\"row\">\n                        <div class=\"col col-xs-1\">\n                            <label>\n                                <input type=\"checkbox\">\n                            </label>\n                            <span class=\"glyphicon glyphicon-star\" ng-click=\"$ctrl.changeStar(email)\" \n                            ng-class=\"{starred :   email.starred}\"></span>\n                        </div>\n                        <div class=\"col col-xs-9    \" ng-click=\"$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')\" >\n                            <span class=\"name\" style=\"min-width: 120px; display: inline-block;\">{{email.name}}</span> \n                            <span class=\"\">Nice work on the lastest version</span>\n                            <span class=\"text-muted\" style=\"font-size: 11px;\">- lorem ipsum {{email.starred}}</span> \n                        </div>\n                        <div class=\"col col-xs-2 pull-right\">\n                        <span class=\"badge\">{{email.time}}</span> \n                        <span class=\"\">\n                            <span class=\"glyphicon glyphicon-paperclip\"></span>\n                        </span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"panel-footer\">\n                <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a> | \n                <a href=\"https://github.com/doubldragon/gmail-clone\">Fork it on Github!</a>\n            </div>\n        </div>\n    </div>\n</div>\n    \n";
+module.exports = "<!-- Pane to view an Email in detail -->\n<div ng-show=\"$ctrl.viewPane == 'develop'\">\n    <h1>This feature is still under development. </h1>\n    <hr>\n    <button class=\"btn btn-primary\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'inbox')\"><span class=\"glyphicon glyphicon-inbox\" aria-hidden=\"true\"> </span> Back to Inbox</button>\n</div>\n<div ng-show=\"$ctrl.viewPane == 'message'\">\n    <div class='panel panel-default'>\n        <div class='panel-heading'>\n            <div class=\"row\">\n            <div class='col col-md-1' style='display: inline-block;'>\n                <img src='{{$ctrl.thumb}}'>\n            </div>\n\n            <div class='col col-md-11' style='display:inline-block;'>\n                <div style='display:inline-block;'>From: {{$ctrl.sender}} ({{$ctrl.senderEmail}})</div>\n                <span class='pull-right'>{{$ctrl.time}}</span> <br /><br />\n                <div>CC: </div><br />\n                <div>Subject: {{$ctrl.subject}}</div>  \n            </div>\n            </div>\n        </div>\n        <div class='panel-body'>\n            <p>{{$ctrl.body}}</p>\n            <hr>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-reply fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-reply-all fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n            <div class='msgButtons' ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n                <a href='#' ><i class=\"fa fa-share fa-2x\" aria-hidden=\"true\"></i></a>\n            </div>\n        </div>\n    </div>\n</div>\n\n<!-- Pane to compose Email -->\n\n<div ng-show=\"$ctrl.viewPane == 'compose'\">\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">TO: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Recipient\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">CC: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Other Recipients\">\n    </div>\n    <div class=\"compose input-group\">\n        <span class=\"input-group-addon\">Subject: </span>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Enter Subject Here...\">\n    </div>\n    <div class=\"compose form-group\">\n        <textarea class=\"form-control\" rows=\"10\" id=\"comment\"></textarea>\n    </div>\n    <div class=\"composeButtons\">\n    <button class=\"btn btn-primary\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n        <span class=\"glyphicon glyphicon-send\" aria-hidden=\"true\"> </span> Send \n    </button>\n    <button class=\"btn btn-default\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'develop')\">\n        <span class=\"glyphicon glyphicon-floppy-disk\" aria-hidden=\"true\"> </span> Save \n    </button>\n    <button class=\"btn btn-danger\" ng-click=\"$ctrl.toggleCompose($ctrl.viewPane = 'inbox')\">\n        <span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"> </span> Discard \n    </button>\n    </div>\n</div>\n\n<!-- Pane to view inbox -->\n\n<div ng-show=\"$ctrl.viewPane=='inbox'\">\n    <ul class=\"nav nav-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs\" ng-click=\"$ctrl.updateTab(tab.name)\" ng-class=\"{active: $ctrl.activeTab === tab.name}\">\n            <a href=\"#\" data-toggle=\"tab\"><span class=\"glyphicon {{tab.icon}}\"></span>{{tab.name}}</a>\n        </li>\n        <!-- Placeholder for future option to add tabs -->\n        <!-- <a href=\"#settings\" data-toggle=\"tab\"><span class=\"glyphicon glyphicon-plus no-margin\"></span></a>\n        </li> -->\n    </ul>\n    <!-- Tab panes -->\n    <div class=\"tab-content\">\n        <div class=\"tab-pane fade in active\" id=\"primary\" ><!-- ng-show=\"$ctrl.activeTab==='primary'\"> -->\n            <div class=\"list-group\">\n                \n                <div class=\"list-group-item\" ng-repeat=\"email in $ctrl.emails | \n                    filter: {starred: $ctrl.showStarred(starred)} | \n                    filter: $ctrl.searchText | \n                    filter: {category: $ctrl.activeTab}\" \n                    ng-class=\"{read : email.read}\"   >\n                    \n                    <div class=\"row\">\n                        <div class=\"col col-xs-1\">\n                            <label>\n                                <input type=\"checkbox\">\n                            </label>\n                            <span class=\"glyphicon glyphicon-star\" ng-click=\"$ctrl.changeStar(email)\" \n                            ng-class=\"{starred :   email.starred}\"></span>\n                        </div>\n                        <div class=\"col col-xs-2\" ng-click=\"$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')\" >\n                            <span class=\"name\" style=\"min-width: 150px; display: inline-block;\">{{email.name}}</span> \n                        </div>\n                        <div class=\"col col-xs-7\" ng-click=\"$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')\" >\n                            \n                            <span class=\"\">{{email.subject}}</span>\n                            <span class=\"text-muted\" style=\"font-size: 11px;\">- {{email.preview}}</span> \n                        </div>\n                        <div class=\"col col-xs-2 pull-right\">\n                        <span class=\"badge\">{{email.time}}</span> \n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"panel-footer\">\n                <a href=\"http://brandonspencer.me\">Made by Brandon Spencer</a> | \n                <a href=\"https://github.com/doubldragon/gmail-clone\">Fork it on Github!</a>\n            </div>\n        </div>\n    </div>\n</div>\n    \n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -291,7 +286,7 @@ var navbarComponent = {
 exports.default = navbarComponent;
 
 },{"./navbar.controller":9,"./navbar.html":10}],9:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -312,11 +307,9 @@ var navbarController = function () {
 	}
 
 	_createClass(navbarController, [{
-		key: 'search',
+		key: "search",
 		value: function search(searchText) {
 			var ctrl = this;
-			console.log('Updating searchText: ', searchText);
-
 			ctrl.$rootScope.searchText = searchText;
 		}
 	}]);
@@ -327,7 +320,7 @@ var navbarController = function () {
 exports.default = navbarController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<div class=\"row top-row \">\n    <div class=\"col-sm-3 col-md-2\"><img class='logo center-block' src='/app/assets/images/bmail.jpg'></div>\n    <div class=\"col-lg-6\">\n        <div class=\"input-group\">\n            <input type=\"text\" class=\"form-control\" placeholder=\"Search Bmail..\" ng-model=\"$ctrl.searchText\" ng-change='$ctrl.search($ctrl.searchText)'>\n            <span class=\"input-group-btn\">\n        <button class=\"btn btn-primary\" type=\"button\" ng-click='$ctrl.search($ctrl.searchText)'><span class=\"glyphicon glyphicon-search\" aria-hidden=\"true\"></span> </button>\n            </span>\n        </div>\n        <!-- /input-group -->\n    </div>\n    <!-- /.col-lg-6 -->\n    <span id='right-search'>\n  <!-- Split button -->\n  <div class=\"btn-group\">\n      <button type=\"button\" class=\"btn btn-danger\">Action</button>\n      <button type=\"button\" class=\"btn btn-danger dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n      <span class=\"caret\"></span>\n    <span class=\"sr-only\">Toggle Dropdown</span>\n    </button>\n    <ul class=\"dropdown-menu\">\n        <li><a href=\"#\">Help</a></li>\n        <li><a href=\"#\">Another action</a></li>\n        <li><a href=\"#\">Something else here</a></li>\n        <li role=\"separator\" class=\"divider\"></li>\n        <li><a href=\"#\">Logout</a></li>\n    </ul>\n</div>\n<img class='profile' src='/app/assets/images/profile.png'></span>\n\n</div>\n<hr>\n\n<!-- <ul class=\"nav nav-tabs nav-justified\">\n  <li><a href=\"#\">Inbox</a></li>\n  <li><a href=\"#\">Social</a></li>\n  <li><a href=\"#\">Promotions</a></li>\n  <li><a href=\"#\">Updates</a></li>\n</ul> -->\n\n<!-- /.row -->\n<!-- <link rel=\"stylesheet\" href=\"navbar.scss\"> -->\n";
+module.exports = "<div class=\"row top-row \">\n    \n    <div class=\"col-sm-1 col-md-2\">\n      <img class='logo center-block' src='/app/assets/images/bmail.jpg'>\n    </div>\n    \n    <div class=\"col-sm-6\">\n        <div class=\"input-group search-bar\">\n          <input type=\"text\" class=\"form-control\" placeholder=\"Search Bmail...\" ng-model=\"$ctrl.searchText\" ng-change='$ctrl.search($ctrl.searchText)'>\n          <span class=\"input-group-btn\">\n            <button class=\"btn btn-primary\" type=\"button\" ng-click='$ctrl.search($ctrl.searchText)'><span class=\"glyphicon glyphicon-search\" aria-hidden=\"true\"></span> </button>\n          </span>\n        </div>\n    </div>\n    <span class=\"pull-right\" id='right-search'>\n      <img class='profile pull-right' src='/app/assets/images/profile.png'>\n    </span>\n\n</div>\n<hr>\n";
 
 },{}],11:[function(require,module,exports){
 'use strict';

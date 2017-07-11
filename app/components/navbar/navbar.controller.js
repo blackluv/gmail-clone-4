@@ -9,8 +9,6 @@ class navbarController {
 
 	search(searchText) {
         const ctrl = this;
-        console.log('Updating searchText: ', searchText);
-
         ctrl.$rootScope.searchText = searchText;
     };
 }

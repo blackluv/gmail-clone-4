@@ -3,7 +3,7 @@ body{ margin-top:50px;}
 .tab-pane .list-group-item {padding-top: 0; padding-bottom: 0;}
 .tab-pane .list-group-item .row {margin: 0;}
 .tab-pane .list-group-item .col { display: inline-block; cursor: pointer; padding-bottom: 10px; padding-top: 10px;}
-.tab-pane .list-group-item:first-child {border-top-right-radius: 0px;border-top-left-radius: 0px;}
+.tab-pane .list-group-item:first-child {border-top: none; border-top-right-radius: 0px;border-top-left-radius: 0px;}
 .tab-pane .list-group-item:last-child {border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;}
 .tab-pane .list-group .checkbox { display: inline-block;margin: 0px; }
 .tab-pane .list-group input[type="checkbox"]{ margin-top: 2px; }
