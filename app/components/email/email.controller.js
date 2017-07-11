@@ -84,6 +84,7 @@ class emailController {
     }
 
     read() {
+        
         let ctrl= this;
         ctrl.unread = 0;
         ctrl.emails.forEach(e => {
@@ -93,6 +94,18 @@ class emailController {
         });
         ctrl.$rootScope.unread = ctrl.unread;
         ctrl.toggleCompose(ctrl.viewPane);
+        
+    }
+
+    readMessage(email) {
+        let ctrl= this;
+        ctrl.read();
+        ctrl.sender = email.name;
+        ctrl.senderEmail = email.email;
+        ctrl.time = email.time;
+        ctrl.subject = "This is the subject";
+        ctrl.body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quibusnam praeteritis? Quo tandem modo? Sed virtutem ipsam inchoavit, nihil amplius. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Quod ea non occurrentia fingunt, vincunt Aristonem; Positum est a nostris in iis esse rebus, quae secundum naturam essent, non dolere; Duo Reges: constructio interrete. Non igitur de improbo, sed de callido improbo quaerimus, qualis Q. Maximas vero virtutes iacere omnis necesse est voluptate dominante. Illis videtur, qui illud non dubitant bonum dicere -; Eaedem enim utilitates poterunt eas labefactare atque pervertere. Que Manilium, ab iisque M. Ita multa dicunt, quae vix intellegam. Quos quidem tibi studiose et diligenter tractandos magnopere censeo. Quid de Pythagora? Qui autem diffidet perpetuitati bonorum suorum, timeat necesse est, ne aliquando amissis illis sit miser. Consequens enim est et post oritur, ut dixi. Illis videtur, qui illud non dubitant bonum dicere -; Hoc non est positum in nostra actione. Quoniam, si dis placet, ab Epicuro loqui discimus. Sed nunc, quod agimus; Ut pulsi recurrant? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Si quae forte-possumus. Sed plane dicit quod intellegit. Sed tempus est, si videtur, et recta quidem ad me. Tibi hoc incredibile, quod beatissimum. Iam id ipsum absurdum, maximum malum neglegi. Septem autem illi non suo, sed populorum suffragio omnium nominati sunt. Non ego tecum iam ita iocabor, ut isdem his de rebus, cum L. Quid igitur, inquit, eos responsuros putas? Non est igitur summum malum dolor. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse?";
+
     }
 
     starredEmail(email) {
@@ -123,7 +136,6 @@ class emailController {
 
     toggleCompose(viewPane) {
         let ctrl = this;
-        console.log(viewPane);
         ctrl.viewPane = viewPane;
         ctrl.$rootScope.viewPane = viewPane;
     }

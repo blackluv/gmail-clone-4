@@ -7,8 +7,8 @@
         <li id ='starred' ng-class="{active : $ctrl.activeNav === 'Starred'}" 
             ng-click="$ctrl.toggleNav('Starred')"><a href="#">Starred</a>
         </li>
-        <li><a href="#">Sent Mail</a></li>
-        <li><a href="#"><span class="badge pull-right">3</span>Drafts</a></li>
+        <li><a href="#" ng-click="$ctrl.toggleCompose('develop')">Sent Mail</a></li>
+        <li><a href="#" ng-click="$ctrl.toggleCompose('develop')"><span class="badge pull-right">3</span>Drafts</a></li>
     </ul>
 </div>
 
