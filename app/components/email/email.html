@@ -1,53 +1,121 @@
-<div>
-    <!-- class="col-sm-9 col-md-10" -->
+<!-- Pane to view an Email in detail -->
+<div ng-show="$ctrl.viewPane == 'develop'">
+    <h1>This feature is still under development. </h1>
+    <hr>
+    <button class="btn btn-primary" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'inbox')"><span class="glyphicon glyphicon-inbox" aria-hidden="true"> </span> Back to Inbox</button>
+</div>
+<div ng-show="$ctrl.viewPane == 'message'">
+    <div class='panel panel-default'>
+        <div class='panel-heading'>
+            <div class="row">
+            <div class='col col-md-1' style='display: inline-block;'>
+                <img src='{{$ctrl.thumb}}'>
+            </div>
+
+            <div class='col col-md-11' style='display:inline-block;'>
+                <div style='display:inline-block;'>From: {{$ctrl.sender}} ({{$ctrl.senderEmail}})</div>
+                <span class='pull-right'>{{$ctrl.time}}</span> <br /><br />
+                <div>CC: </div><br />
+                <div>Subject: {{$ctrl.subject}}</div>  
+            </div>
+            </div>
+        </div>
+        <div class='panel-body'>
+            <p>{{$ctrl.body}}</p>
+            <hr>
+            <div class='msgButtons' ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'develop')">
+                <a href='#' ><i class="fa fa-reply fa-2x" aria-hidden="true"></i></a>
+            </div>
+            <div class='msgButtons' ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'develop')">
+                <a href='#' ><i class="fa fa-reply-all fa-2x" aria-hidden="true"></i></a>
+            </div>
+            <div class='msgButtons' ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'develop')">
+                <a href='#' ><i class="fa fa-share fa-2x" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pane to compose Email -->
+
+<div ng-show="$ctrl.viewPane == 'compose'">
+    <div class="compose input-group">
+        <span class="input-group-addon">TO: </span>
+        <input type="text" class="form-control" placeholder="Recipient">
+    </div>
+    <div class="compose input-group">
+        <span class="input-group-addon">CC: </span>
+        <input type="text" class="form-control" placeholder="Other Recipients">
+    </div>
+    <div class="compose input-group">
+        <span class="input-group-addon">Subject: </span>
+        <input type="text" class="form-control" placeholder="Enter Subject Here...">
+    </div>
+    <div class="compose form-group">
+        <textarea class="form-control" rows="10" id="comment"></textarea>
+    </div>
+    <div class="composeButtons">
+    <button class="btn btn-primary" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'develop')">
+        <span class="glyphicon glyphicon-send" aria-hidden="true"> </span> Send 
+    </button>
+    <button class="btn btn-default" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'develop')">
+        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> </span> Save 
+    </button>
+    <button class="btn btn-danger" ng-click="$ctrl.toggleCompose($ctrl.viewPane = 'inbox')">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Discard 
+    </button>
+    </div>
+</div>
+
+<!-- Pane to view inbox -->
+
+<div ng-show="$ctrl.viewPane=='inbox'">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-inbox">
-                </span>Primary</a></li>
-        <li><a href="#profile" data-toggle="tab"><span class="glyphicon glyphicon-user"></span>
-                    Social</a></li>
-        <li><a href="#messages" data-toggle="tab"><span class="glyphicon glyphicon-tags"></span>
-                    Promotions</a></li>
-        <li><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-plus no-margin">
-                </span></a></li>
+        <li ng-repeat="tab in $ctrl.tabs" ng-click="$ctrl.updateTab(tab.name)" ng-class="{active: $ctrl.activeTab === tab.name}">
+            <a href="#" data-toggle="tab"><span class="glyphicon {{tab.icon}}"></span>{{tab.name}}</a>
+        </li>
+        <!-- Placeholder for future option to add tabs -->
+        <!-- <a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-plus no-margin"></span></a>
+        </li> -->
     </ul>
     <!-- Tab panes -->
-
-    <button ng-click="$ctrl.getEmails()">PUSH ME</button>
-    <h1>{{$ctrl.emails.length}}</h1>
     <div class="tab-content">
-        <div class="tab-pane fade in active" id="home">
+        <div class="tab-pane fade in active" id="primary" ><!-- ng-show="$ctrl.activeTab==='primary'"> -->
             <div class="list-group">
-                <a href="#" class="list-group-item" ng-repeat="email in $ctrl.emails">
-                   
-                        <label>
-                            <input type="checkbox">
-                        </label>
+                
+                <div class="list-group-item" ng-repeat="email in $ctrl.emails | 
+                    filter: {starred: $ctrl.showStarred(starred)} | 
+                    filter: $ctrl.searchText | 
+                    filter: {category: $ctrl.activeTab}" 
+                    ng-class="{read : email.read}"   >
                     
-                    <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
-                                display: inline-block;">{{email.name}}</span> <span class="">Nice work on the lastest version</span>
-                    <span class="text-muted" style="font-size: 11px;">- More content here</span> <span class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
-                                </span></span>
-                </a>
-
-            </div>
-        </div>
-        <div class="tab-pane fade in" id="profile">
-            <div class="list-group">
-                <div class="list-group-item">
-                    <span class="text-center">This tab is empty.</span>
+                    <div class="row">
+                        <div class="col col-xs-1">
+                            <label>
+                                <input type="checkbox">
+                            </label>
+                            <span class="glyphicon glyphicon-star" ng-click="$ctrl.changeStar(email)" 
+                            ng-class="{starred :   email.starred}"></span>
+                        </div>
+                        <div class="col col-xs-2" ng-click="$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')" >
+                            <span class="name" style="min-width: 150px; display: inline-block;">{{email.name}}</span> 
+                        </div>
+                        <div class="col col-xs-7" ng-click="$ctrl.readMessage(email,email.read=true, $ctrl.viewPane = 'message')" >
+                            
+                            <span class="">{{email.subject}}</span>
+                            <span class="text-muted" style="font-size: 11px;">- {{email.preview}}</span> 
+                        </div>
+                        <div class="col col-xs-2 pull-right">
+                        <span class="badge">{{email.time}}</span> 
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tab-pane fade in" id="messages">
-            ...</div>
-        <div class="tab-pane fade in" id="settings">
-            This tab is empty.</div>
-    </div>
-    <div class="row-md-12">
-        <div class="well">
-            <a href="http://doubldragon.github.io">Made by Brandon Spencer</a>
+            <div class="panel-footer">
+                <a href="http://brandonspencer.me">Made by Brandon Spencer</a> | 
+                <a href="https://github.com/doubldragon/gmail-clone">Fork it on Github!</a>
+            </div>
         </div>
     </div>
 </div>
-</div>
-</div>
+    
